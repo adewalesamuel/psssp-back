@@ -24,13 +24,13 @@ class UpdateOrderRequest extends FormRequest
     public function rules()
     {
         return [
-            'code' => 'required|string|unique:orders',
-			'quantity' => 'required|integer',
-			'amount' => 'required|integer',
-			'status' => 'required|string',
-			'product_id' => 'required|integer|exists:products,id',
-			'user_id' => 'required|integer|exists:users,id',
-			
+            'code' => 'nullable|string|unique:orders',
+			'quantity' => 'nullable|integer',
+			'amount' => 'nullable|integer',
+			'status' => 'nullable|string',
+			'product_id' => 'nullable|integer|exists:products,id',
+			'user_id' => 'nullable|integer|exists:users,id',
+
         ];
     }
 }

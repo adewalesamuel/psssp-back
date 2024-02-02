@@ -24,20 +24,20 @@ class UpdateUserRequest extends FormRequest
     public function rules()
     {
         return [
-            'fullname' => 'required|string',
-			'email' => 'required|string|unique:users',
-			'password' => 'required|string|unique:users',
-			'phone_number' => 'required|string|unique:users',
-			'backup_number' => 'required|string',
-			'whatsapp_number' => 'required|string',
-			'telegram_number' => 'required|string',
-			'shop_name' => 'required|string',
-			'profile_img_url' => 'required|string',
-			'is_active' => 'required|boolean',
-			'sponsor_code' => 'required|string',
-			'activation_code' => 'required|string',
-			'country_id' => 'required|integer|exists:countries,id',
-			
+            'fullname' => 'nullable|string',
+			'email' => 'nullable|string|unique:users',
+			'password' => 'nullable|string|unique:users',
+			'phone_number' => 'nullable|string|unique:users',
+			'backup_number' => 'nullable|string',
+			'whatsapp_number' => 'nullable|string',
+			'telegram_number' => 'nullable|string',
+			'shop_name' => 'nullable|string',
+			'profile_img_url' => 'nullable|string',
+			'is_active' => 'nullable|boolean',
+			'sponsor_code' => 'nullable|string',
+			'activation_code' => 'nullable|string',
+			'country_id' => 'nullable|integer|exists:countries,id',
+
         ];
     }
 }

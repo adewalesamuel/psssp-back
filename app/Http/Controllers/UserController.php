@@ -1,10 +1,13 @@
 <?php
 namespace App\Http\Controllers;
 
+use App\Http\Auth;
 use App\Models\User;
 use Illuminate\Http\Request;
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
+use App\Models\Order;
+use App\Models\Product;
 use Illuminate\Support\Str;
 
 
@@ -61,14 +64,14 @@ class UserController extends Controller
 		$user->sponsor_code = $validated['sponsor_code'] ?? null;
 		$user->activation_code = $validated['activation_code'] ?? null;
 		$user->country_id = $validated['country_id'] ?? null;
-		
+
         $user->save();
 
         $data = [
             'success'       => true,
             'user'   => $user
         ];
-        
+
         return response()->json($data);
     }
 
@@ -80,6 +83,42 @@ class UserController extends Controller
      */
     public function show(User $user)
     {
+        $data = [
+            'success' => true,
+            'user' => $user
+        ];
+
+        return response()->json($data);
+    }
+
+    public function user_analitycs(Request $request) {
+        $user = Auth::getUser($request, Auth::USER);
+
+        $user_product_id_list = Product::where('user_id', $user->id)
+        ->where('status', 'validated')->pluck('id')->toArray();
+        $user_product_order_list = Order::whereIn('product_id', $user_product_id_list);
+        $user_product_list = Product::whereIn('id', $user_product_id_list);
+
+        $data = [
+            'success' => true,
+            'analitys' => [
+                'products_count' => count($user_product_id_list),
+                'clients_count' => $user_product_order_list->groupBy('user_id')->count(),
+                'revenu' => $user_product_order_list->sum('amount'),
+                'orders_count' => $user_product_order_list->count(),
+                'initial_stock' => $user_product_list->sum('initial_stock'),
+                'current_stock' => $user_product_list->sum('current_stock'),
+                'notifications_count' => $user->notifications->count()
+            ]
+        ];
+
+        return response()->json($data, 200);
+    }
+
+    public function user_show(Request $request)
+    {
+        $user = Auth::getUser($request, Auth::USER);
+
         $data = [
             'success' => true,
             'user' => $user
@@ -123,14 +162,38 @@ class UserController extends Controller
 		$user->sponsor_code = $validated['sponsor_code'] ?? null;
 		$user->activation_code = $validated['activation_code'] ?? null;
 		$user->country_id = $validated['country_id'] ?? null;
-		
+
         $user->save();
 
         $data = [
             'success'       => true,
             'user'   => $user
         ];
-        
+
+        return response()->json($data);
+    }
+
+    public function user_update(UpdateUserRequest $request, User $user)
+    {
+        $validated = $request->validated();
+
+        $user->fullname = $validated['fullname'] ?? null;
+		$user->email = $validated['email'] ?? null;
+		$user->phone_number = $validated['phone_number'] ?? null;
+		$user->backup_number = $validated['backup_number'] ?? null;
+		$user->whatsapp_number = $validated['whatsapp_number'] ?? null;
+		$user->telegram_number = $validated['telegram_number'] ?? null;
+		$user->shop_name = $validated['shop_name'] ?? null;
+		$user->profile_img_url = $validated['profile_img_url'] ?? null;
+		$user->country_id = $validated['country_id'] ?? null;
+
+        $user->save();
+
+        $data = [
+            'success'       => true,
+            'user'   => $user
+        ];
+
         return response()->json($data);
     }
 
@@ -141,7 +204,7 @@ class UserController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function destroy(User $user)
-    {   
+    {
         $user->delete();
 
         $data = [

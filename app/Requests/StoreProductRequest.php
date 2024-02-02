@@ -25,17 +25,17 @@ class StoreProductRequest extends FormRequest
     {
         return [
             'name' => 'required|string',
-			'slug' => 'required|string|unique:products',
-			'description' => 'required|string',
+			'slug' => 'nullable|string|unique:products',
+			'description' => 'nullable|string',
 			'price' => 'required|integer',
-			'download_code' => 'required|string',
+			'download_code' => 'nullable|string',
 			'initial_stock' => 'required|integer',
 			'current_stock' => 'required|integer',
-			'img_url' => 'required|string',
+			'img_url' => 'nullable|string',
 			'file_url' => 'required|string',
-			'user_id' => 'required|integer|exists:users,id',
+			'user_id' => 'nullable|integer|exists:users,id',
 			'category_id' => 'required|integer|exists:categories,id',
-			
+
         ];
     }
 }

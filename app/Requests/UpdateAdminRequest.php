@@ -24,12 +24,12 @@ class UpdateAdminRequest extends FormRequest
     public function rules()
     {
         return [
-            'fullname' => 'required|string',
-			'email' => 'required|string|unique:admins',
-			'password' => 'required|string|unique:admins',
-			'profile_img_url' => 'required|string',
-			'role_id' => 'required|integer|exists:roles,id',
-			
+            'fullname' => 'nullable|string',
+			'email' => 'nullable|string|unique:admins',
+			'password' => 'nullable|string|unique:admins',
+			'profile_img_url' => 'nullable|string',
+			'role_id' => 'nullable|integer|exists:roles,id',
+
         ];
     }
 }

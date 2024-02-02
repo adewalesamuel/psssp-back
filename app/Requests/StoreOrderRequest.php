@@ -24,13 +24,13 @@ class StoreOrderRequest extends FormRequest
     public function rules()
     {
         return [
-            'code' => 'required|string|unique:orders',
+            'code' => 'nullable|string|unique:orders',
 			'quantity' => 'required|integer',
 			'amount' => 'required|integer',
-			'status' => 'required|string',
+			'status' => 'nullable|string',
 			'product_id' => 'required|integer|exists:products,id',
-			'user_id' => 'required|integer|exists:users,id',
-			
+			'user_id' => 'nullable|integer|exists:users,id',
+
         ];
     }
 }

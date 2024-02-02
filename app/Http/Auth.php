@@ -4,7 +4,6 @@ namespace App\Http;
 
 use Illuminate\Http\Request;
 use App\Models\User;
-use App\Models\Artisan;
 use App\Models\Admin;
 
 
@@ -13,8 +12,9 @@ class Auth {
     public const USER = "user";
 
     public static function getUser(Request $request, string $type='client')
-    {   
-        $token = $request->header('Authorization') ? explode(" ", $request->header('Authorization'))[1] : null;
+    {
+        $token = $request->header('Authorization') ?
+         explode(" ", $request->header('Authorization'))[1] : null;
         $user = null;
 
         switch ($type) {
@@ -32,7 +32,7 @@ class Auth {
         return $user;
     }
 
-    private static function getAdminByToken(string $token) 
+    private static function getAdminByToken(string $token)
     {
         return Admin::where('api_token', $token)->first();
     }
@@ -40,6 +40,6 @@ class Auth {
     private static function getUserByToken($token)
     {
         return User::where('api_token', $token)->first();
-   
+
     }
 }

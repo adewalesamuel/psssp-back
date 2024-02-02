@@ -25,15 +25,15 @@ class StoreEbookRequest extends FormRequest
     {
         return [
             'name' => 'required|string',
-			'slug' => 'required|string|unique:ebooks',
-			'type' => 'required|string',
-			'download_code' => 'required|string',
-			'description' => 'required|string',
+			'slug' => 'nullable|string|unique:ebooks',
+			'type' => 'nullable|string',
+			'download_code' => 'nullable|string',
+			'description' => 'nullable|string',
 			'price' => 'required|integer',
-			'initial_stock' => 'required|integer',
-			'img_url' => 'required|string',
+			'initial_stock' => 'nullable|integer',
+			'img_url' => 'nullable|string',
 			'file_url' => 'required|string',
-			
+
         ];
     }
 }

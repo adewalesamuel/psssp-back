@@ -32,12 +32,12 @@ class StoreUserRequest extends FormRequest
 			'whatsapp_number' => 'required|string',
 			'telegram_number' => 'required|string',
 			'shop_name' => 'required|string',
-			'profile_img_url' => 'required|string',
-			'is_active' => 'required|boolean',
-			'sponsor_code' => 'required|string',
-			'activation_code' => 'required|string',
+			'profile_img_url' => 'nullable|string',
+			'is_active' => 'nullable|boolean',
+			'sponsor_code' => 'nullable|string',
+			'activation_code' => 'nullable|string',
 			'country_id' => 'required|integer|exists:countries,id',
-			
+
         ];
     }
 }

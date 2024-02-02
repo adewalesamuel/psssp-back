@@ -25,11 +25,11 @@ class StoreCategoryRequest extends FormRequest
     {
         return [
             'name' => 'required|string',
-			'slug' => 'required|string|unique:categories',
-			'description' => 'required|string',
-			'img_url' => 'required|string',
-			'category_id' => 'required|integer|exists:categories,id',
-			
+			'slug' => 'nullable|string|unique:categories',
+			'description' => 'nullable|string',
+			'img_url' => 'nullable|string',
+			'category_id' => 'nullable|integer|exists:categories,id',
+
         ];
     }
 }
