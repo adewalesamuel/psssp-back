@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Http\Requests\StoreOrderRequest;
 use App\Http\Requests\UpdateOrderRequest;
 use Illuminate\Support\Str;
+use App\Http\Auth;
 
 
 class OrderController extends Controller
@@ -24,6 +25,21 @@ class OrderController extends Controller
         ];
 
         return response()->json($data);
+    }
+
+    public function user_index(Request $request) {
+        $user =  Auth::getUser($request, Auth::USER);
+        $status = $request->input('status');
+        $orders = Order::where('user_id', $user->id):
+
+        if ($status) $orders = $orders->where('status', $status);
+
+        $data = [
+            'success' => true,
+            'orders' => $orders->orderBy('created_at', 'desc')->paginate()
+        ];
+
+        return response()->json($data, 200);
     }
 
     /**
@@ -55,6 +71,29 @@ class OrderController extends Controller
 		$order->product_id = $validated['product_id'] ?? null;
 		$order->user_id = $validated['user_id'] ?? null;
 		
+        $order->save();
+
+        $data = [
+            'success'       => true,
+            'order'   => $order
+        ];
+        
+        return response()->json($data);
+    }
+
+    public function user_store(StoreOrderRequest $request)
+    {
+        $user =  Auth::getUser($request, Auth::USER);
+        $validated = $request->validated();
+
+        $order = new Order;
+
+        $order->code = strtoupper(Str::random(10));
+        $order->quantity = $validated['quantity'] ?? null;
+        $order->amount = $validated['amount'] ?? null;
+        $order->product_id = $validated['product_id'] ?? null;
+        $order->user_id = $user->id;
+        
         $order->save();
 
         $data = [
@@ -110,6 +149,26 @@ class OrderController extends Controller
 		$order->product_id = $validated['product_id'] ?? null;
 		$order->user_id = $validated['user_id'] ?? null;
 		
+        $order->save();
+
+        $data = [
+            'success'       => true,
+            'order'   => $order
+        ];
+        
+        return response()->json($data);
+    }
+
+    public function user_update(UpdateOrderRequest $request, Order $order)
+    {
+        $user =  Auth::getUser($request, Auth::USER);
+        $validated = $request->validated();
+
+        $order->quantity = $validated['quantity'] ?? null;
+        $order->amount = $validated['amount'] ?? null;
+        $order->product_id = $validated['product_id'] ?? null;
+        $order->user_id = $user->id;
+        
         $order->save();
 
         $data = [

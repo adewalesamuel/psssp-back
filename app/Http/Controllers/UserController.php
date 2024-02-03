@@ -6,6 +6,8 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
+use App\Http\Requests\UserValidateRequest;
+use App\Http\Requests\UpdatePasswordRequest;
 use App\Models\Order;
 use App\Models\Product;
 use Illuminate\Support\Str;
@@ -173,8 +175,9 @@ class UserController extends Controller
         return response()->json($data);
     }
 
-    public function user_update(UpdateUserRequest $request, User $user)
+    public function user_update(UpdateUserRequest $request)
     {
+        $user = Auth::getUser($request, Auth::USER);
         $validated = $request->validated();
 
         $user->fullname = $validated['fullname'] ?? null;
@@ -195,6 +198,48 @@ class UserController extends Controller
         ];
 
         return response()->json($data);
+    }
+
+    public function user_password(UpdatePasswordRequest $request)
+    {
+        $validated = $request->validated();
+        $user = Auth::getUser($request, Auth::USER);
+
+        $user->password = $validated['passowrd'];
+
+        $user->save();
+
+        $data = [
+            'success' => true,
+        ];
+
+        return response()->json($date, 200);
+
+    }
+
+    public function user_validate(UserValidateRequest $request) {
+        $validated = $request->validated();
+        $user = Auth::getUser($request, Auth::USER);
+
+        if (!$user->activaton_code ||
+        $user->activaton_code != $validated['activaton_code']) {
+            $date = [
+                'error' => true,
+                'message' => 'Code de validation incorrect'
+            ];
+
+            return response()->json($data, 400);
+        }
+
+        $user->is_active = true;
+
+        $user->save();
+
+        $data = [
+            'success' => true
+        ];
+
+        return response()->json($data, 200);
     }
 
     /**

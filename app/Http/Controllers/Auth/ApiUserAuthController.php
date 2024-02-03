@@ -15,6 +15,7 @@ use App\Http\Requests\ForgotPasswordRequest;
 use App\Http\Requests\ResetPasswordRequest;
 use App\Jobs\AdminMailNotificationJob;
 use App\Notifications\UserRegisterNotification;
+use App\Utils;
 
 class ApiUserAuthController extends Controller
 {
@@ -56,15 +57,16 @@ class ApiUserAuthController extends Controller
 		$user->telegram_number = $validated['telegram_number'] ?? null;
 		$user->shop_name = $validated['shop_name'] ?? null;
 		$user->profile_img_url = $validated['profile_img_url'] ?? null;
-		$user->is_active = $validated['is_active'] ?? null;
-		$user->sponsor_code = $validated['sponsor_code'] ?? null;
-		$user->activation_code = $validated['activation_code'] ?? null;
+		$user->sponsor_code = "CP" . Utils::generateRandAlnum();
+		$user->activation_code = "CA" . Utils::generateRandAlnum();
 		$user->country_id = $validated['country_id'] ?? null;
 
         $user->save();
 
-        AdminMailNotificationJob::dispatchAfterResponse(
-            new UserRegisterNotification($user));
+        //Create orderd
+
+        // AdminMailNotificationJob::dispatchAfterResponse(
+        //     new UserRegisterNotification($user));
 
         $data = [
             'success'  => true,
