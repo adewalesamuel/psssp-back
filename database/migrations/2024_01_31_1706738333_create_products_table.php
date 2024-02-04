@@ -24,9 +24,11 @@ class CreateProductsTable extends Migration
 			$table->integer('current_stock')->default(0);
 			$table->string('img_url')->nullable()->default('');
 			$table->string('file_url')->nullable()->default('');
+			$table->boolean('is_public')->default(false);
 			$table->foreignId('user_id')
+            ->nullable()
 			->constrained()
-			->onDelete('cascade');
+			->nullOnDelete();
 			$table->foreignId('category_id')
 			->constrained()
 			->onDelete('cascade');

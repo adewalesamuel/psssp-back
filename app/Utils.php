@@ -13,5 +13,7 @@ class Utils {
             $randNumber = rand(0, count($numberList) - 1);
             $randomAlnum .= "{$randNumber}{$randLetter}";
         }
+
+        return $randomAlnum;
     }
 }

@@ -26,6 +26,7 @@ class CreateUsersTable extends Migration
 			$table->string('profile_img_url')->nullable()->default('');
 			$table->boolean('is_active')->default(false);
 			$table->string('sponsor_code')->nullable()->default('');
+			$table->string('referer_sponsor_code')->nullable()->default('');
 			$table->string('activation_code')->nullable()->default('');
 			$table->foreignId('country_id')
             ->nullable()

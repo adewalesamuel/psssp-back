@@ -25,17 +25,17 @@ class StoreUserRequest extends FormRequest
     {
         return [
             'fullname' => 'required|string',
-			'email' => 'required|string|unique:users',
-			'password' => 'required|string|unique:users',
-			'phone_number' => 'required|string|unique:users',
-			'backup_number' => 'required|string',
-			'whatsapp_number' => 'required|string',
-			'telegram_number' => 'required|string',
-			'shop_name' => 'required|string',
+			'email' => 'required|string|unique',
+			'password' => 'required|string|unique',
+			'phone_number' => 'required|string|unique',
+			'backup_number' => 'required|string|unique',
+			'whatsapp_number' => 'required|string|unique',
+			'telegram_number' => 'required|string|unique',
+			'shop_name' => 'required|string|unique',
 			'profile_img_url' => 'nullable|string',
 			'is_active' => 'nullable|boolean',
 			'sponsor_code' => 'nullable|string',
-			'activation_code' => 'nullable|string',
+            'referer_sponsor_code' => 'nullable|string|exists:users,sponsor_code',
 			'country_id' => 'required|integer|exists:countries,id',
 
         ];

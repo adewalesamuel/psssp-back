@@ -213,7 +213,7 @@ class UserController extends Controller
             'success' => true,
         ];
 
-        return response()->json($date, 200);
+        return response()->json($data, 200);
 
     }
 
@@ -223,7 +223,7 @@ class UserController extends Controller
 
         if (!$user->activaton_code ||
         $user->activaton_code != $validated['activaton_code']) {
-            $date = [
+            $data = [
                 'error' => true,
                 'message' => 'Code de validation incorrect'
             ];
@@ -234,6 +234,8 @@ class UserController extends Controller
         $user->is_active = true;
 
         $user->save();
+
+        //Create orders from spnsor code
 
         $data = [
             'success' => true

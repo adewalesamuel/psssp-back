@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Password;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
+use App\Models\Product;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\ForgotPasswordRequest;
@@ -58,12 +59,14 @@ class ApiUserAuthController extends Controller
 		$user->shop_name = $validated['shop_name'] ?? null;
 		$user->profile_img_url = $validated['profile_img_url'] ?? null;
 		$user->sponsor_code = "CP" . Utils::generateRandAlnum();
+        $user->referer_sponsor_code = $validated['referer_sponsor_code'] ?? null;
 		$user->activation_code = "CA" . Utils::generateRandAlnum();
 		$user->country_id = $validated['country_id'] ?? null;
 
         $user->save();
 
-        //Create orderd
+        $referer = User::where('sponsor_code', $validated['referer_sponsor_code'])->first();
+        $product = Product::where('download_code', $validated['referer_sponsor_code'])->first();
 
         // AdminMailNotificationJob::dispatchAfterResponse(
         //     new UserRegisterNotification($user));
@@ -71,7 +74,9 @@ class ApiUserAuthController extends Controller
         $data = [
             'success'  => true,
             'user'   => $user,
-            'tk' => $token
+            'tk' => $token,
+            'referer_id' => $referer ?? $referer->id,
+            'producd_id' => $product ?? $product->id
         ];
 
         return response()->json($data);
