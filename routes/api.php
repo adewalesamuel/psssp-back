@@ -33,9 +33,9 @@ Route::get('categories/{category}', [CategoryController::class, 'show']);
 
 Route::post('login', [ApiUserAuthController::class, 'login']);
 Route::post('register', [ApiUserAuthController::class, 'register']);
-Route::post('logout', [ApiUserAuthController::class, 'logout']);
 
 Route::middleware(['auth.api_token:user'])->group(function () {
+    Route::post('logout', [ApiUserAuthController::class, 'logout']);
     Route::post('validate', [UserController::class, 'user_validate']);
 
     Route::get('analitycs', [UserController::class, 'analitycs']);

@@ -28,6 +28,7 @@ class CreateUsersTable extends Migration
 			$table->string('sponsor_code')->nullable()->default('');
 			$table->string('referer_sponsor_code')->nullable()->default('');
 			$table->string('activation_code')->nullable()->default('');
+			$table->string('api_token')->nullable();
 			$table->foreignId('country_id')
             ->nullable()
 			->constrained()

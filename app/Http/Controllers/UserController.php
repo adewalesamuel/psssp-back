@@ -221,8 +221,7 @@ class UserController extends Controller
         $validated = $request->validated();
         $user = Auth::getUser($request, Auth::USER);
 
-        if (!$user->activaton_code ||
-        $user->activaton_code != $validated['activaton_code']) {
+        if ($user->activation_code != $validated['activation_code']) {
             $data = [
                 'error' => true,
                 'message' => 'Code de validation incorrect'
@@ -235,10 +234,29 @@ class UserController extends Controller
 
         $user->save();
 
-        //Create orders from spnsor code
+        $referer = User::where('sponsor_code', $user->referer_sponsor_code)->first();
+        $product = Product::where('download_code', $user->referer_sponsor_code)->first();
+
+        $comunity_products = collect(Product::whereNull('user_id')
+        ->orderBy('created_at', 'desc')->get())->map(function($product) use ($user) {
+            unset($product['id']);
+            unset($product['is_public']);
+            unset($product['deleted_at']);
+            unset($product['updated_at']);
+            unset($product['created_at']);
+
+            $product['user_id'] = $user->id;
+            $product['slug'] .= Str::random(6);
+
+            return $product;
+        })->toArray();
+
+        Product::insert($comunity_products);
 
         $data = [
-            'success' => true
+            'success' => true,
+            'referer' => $referer,
+            'product' => $product
         ];
 
         return response()->json($data, 200);

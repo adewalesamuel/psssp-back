@@ -49,7 +49,7 @@ class ProductController extends Controller
         $product = new Product;
 
         $product->name = $validated['name'] ?? null;
-		$product->slug = $validated['slug'] ?? null;
+		$product->slug = Str::slug($validated['name']) . Str::random(6);
 		$product->description = $validated['description'] ?? null;
 		$product->price = $validated['price'] ?? null;
 		$product->download_code = $validated['download_code'] ?? null;
@@ -59,14 +59,14 @@ class ProductController extends Controller
 		$product->file_url = $validated['file_url'] ?? null;
 		$product->user_id = $validated['user_id'] ?? null;
 		$product->category_id = $validated['category_id'] ?? null;
-		
+
         $product->save();
 
         $data = [
             'success'       => true,
             'product'   => $product
         ];
-        
+
         return response()->json($data);
     }
 
@@ -109,7 +109,6 @@ class ProductController extends Controller
         $validated = $request->validated();
 
         $product->name = $validated['name'] ?? null;
-		$product->slug = $validated['slug'] ?? null;
 		$product->description = $validated['description'] ?? null;
 		$product->price = $validated['price'] ?? null;
 		$product->download_code = $validated['download_code'] ?? null;
@@ -119,14 +118,14 @@ class ProductController extends Controller
 		$product->file_url = $validated['file_url'] ?? null;
 		$product->user_id = $validated['user_id'] ?? null;
 		$product->category_id = $validated['category_id'] ?? null;
-		
+
         $product->save();
 
         $data = [
             'success'       => true,
             'product'   => $product
         ];
-        
+
         return response()->json($data);
     }
 
@@ -137,7 +136,7 @@ class ProductController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function destroy(Product $product)
-    {   
+    {
         $product->delete();
 
         $data = [
