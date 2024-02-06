@@ -20,7 +20,7 @@ class CategoryController extends Controller
         $data = [
             'success' => true,
             'categories' => Category::where('id', '>', -1)
-            ->orderBy('created_at', 'desc')->paginate()
+            ->orderBy('created_at', 'desc')->get()
         ];
 
         return response()->json($data);
@@ -53,14 +53,14 @@ class CategoryController extends Controller
 		$category->description = $validated['description'] ?? null;
 		$category->img_url = $validated['img_url'] ?? null;
 		$category->category_id = $validated['category_id'] ?? null;
-		
+
         $category->save();
 
         $data = [
             'success'       => true,
             'category'   => $category
         ];
-        
+
         return response()->json($data);
     }
 
@@ -107,14 +107,14 @@ class CategoryController extends Controller
 		$category->description = $validated['description'] ?? null;
 		$category->img_url = $validated['img_url'] ?? null;
 		$category->category_id = $validated['category_id'] ?? null;
-		
+
         $category->save();
 
         $data = [
             'success'       => true,
             'category'   => $category
         ];
-        
+
         return response()->json($data);
     }
 
@@ -125,7 +125,7 @@ class CategoryController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function destroy(Category $category)
-    {   
+    {
         $category->delete();
 
         $data = [

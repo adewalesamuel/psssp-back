@@ -6,6 +6,7 @@ use App\Models\Product;
 use Illuminate\Http\Request;
 use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\UpdateProductRequest;
+use App\Utils;
 use Illuminate\Support\Str;
 
 
@@ -66,7 +67,7 @@ class ProductController extends Controller
 		$product->slug = Str::slug($validated['name']) . Str::random(6);
 		$product->description = $validated['description'] ?? null;
 		$product->price = $validated['price'] ?? null;
-		$product->download_code = $validated['download_code'] ?? null;
+		$product->download_code = "CP" . Utils::generateRandAlnum();
 		$product->initial_stock = $validated['initial_stock'] ?? null;
 		$product->current_stock = $validated['current_stock'] ?? null;
 		$product->img_url = $validated['img_url'] ?? null;
@@ -95,7 +96,7 @@ class ProductController extends Controller
 		$product->slug = Str::slug($validated['name']) . Str::random(6);
 		$product->description = $validated['description'] ?? null;
 		$product->price = $validated['price'] ?? null;
-		$product->download_code = $validated['download_code'] ?? null;
+		$product->download_code = "CP" . Utils::generateRandAlnum();
 		$product->initial_stock = $validated['initial_stock'] ?? null;
 		$product->current_stock = $validated['current_stock'] ?? null;
 		$product->img_url = $validated['img_url'] ?? null;
@@ -129,6 +130,19 @@ class ProductController extends Controller
         return response()->json($data);
     }
 
+    public function user_show(Request $request, string $slug)
+    {
+        $user = Auth::getUser($request, Auth::USER);
+
+        $data = [
+            'success' => true,
+            'product' => Product::where('user_id', $user->id)
+            ->where('slug', $slug)->firstOrFail()
+        ];
+
+        return response()->json($data);
+    }
+
     /**
      * Show the form for editing the specified resource.
      *
@@ -154,12 +168,37 @@ class ProductController extends Controller
         $product->name = $validated['name'] ?? null;
 		$product->description = $validated['description'] ?? null;
 		$product->price = $validated['price'] ?? null;
-		$product->download_code = $validated['download_code'] ?? null;
+		$product->download_code = "CP" . Utils::generateRandAlnum();
 		$product->initial_stock = $validated['initial_stock'] ?? null;
 		$product->current_stock = $validated['current_stock'] ?? null;
 		$product->img_url = $validated['img_url'] ?? null;
 		$product->file_url = $validated['file_url'] ?? null;
 		$product->user_id = $validated['user_id'] ?? null;
+		$product->category_id = $validated['category_id'] ?? null;
+
+        $product->save();
+
+        $data = [
+            'success'       => true,
+            'product'   => $product
+        ];
+
+        return response()->json($data);
+    }
+
+    public function user_update(UpdateProductRequest $request, Product $product)
+    {
+        $user = Auth::getUser($request, Auth::USER);
+        $validated = $request->validated();
+
+        $product->name = $validated['name'] ?? null;
+		$product->description = $validated['description'] ?? null;
+		$product->price = $validated['price'] ?? null;
+		$product->initial_stock = $validated['initial_stock'] ?? null;
+		$product->current_stock = $validated['current_stock'] ?? null;
+		$product->img_url = $validated['img_url'] ?? null;
+		$product->file_url = $validated['file_url'] ?? null;
+		$product->user_id = $user->id;
 		$product->category_id = $validated['category_id'] ?? null;
 
         $product->save();

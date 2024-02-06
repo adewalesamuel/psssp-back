@@ -46,7 +46,10 @@ Route::middleware(['auth.api_token:user'])->group(function () {
     Route::put('password', [UserController::class, 'user_password']);
 
     Route::get('products', [ProductController::class, 'user_index']);
+    Route::get('products/{slug}', [ProductController::class, 'user_show']);
     Route::post('products', [ProductController::class, 'user_store']);
+    Route::put('products/{product}', [ProductController::class, 'user_update']);
+    Route::delete('products/{id}', [ProductController::class, 'delete']);
 
     Route::get('orders', [OrderController::class, 'user_index']);
     Route::post('orders', [OrderController::class, 'user_store']);
