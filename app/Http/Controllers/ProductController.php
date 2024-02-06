@@ -1,6 +1,7 @@
 <?php
 namespace App\Http\Controllers;
 
+use App\Http\Auth;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use App\Http\Requests\StoreProductRequest;
@@ -20,7 +21,20 @@ class ProductController extends Controller
         $data = [
             'success' => true,
             'products' => Product::where('id', '>', -1)
-            ->orderBy('created_at', 'desc')->paginate()
+            ->with(['category'])->orderBy('created_at', 'desc')->paginate()
+        ];
+
+        return response()->json($data);
+    }
+
+    public function user_index(Request $request)
+    {
+        $user = Auth::getUser($request, Auth::USER);
+
+        $data = [
+            'success' => true,
+            'products' => Product::where('user_id', $user->id)
+            ->with(['category'])->orderBy('created_at', 'desc')->paginate()
         ];
 
         return response()->json($data);
@@ -58,6 +72,35 @@ class ProductController extends Controller
 		$product->img_url = $validated['img_url'] ?? null;
 		$product->file_url = $validated['file_url'] ?? null;
 		$product->user_id = $validated['user_id'] ?? null;
+		$product->category_id = $validated['category_id'] ?? null;
+
+        $product->save();
+
+        $data = [
+            'success'       => true,
+            'product'   => $product
+        ];
+
+        return response()->json($data);
+    }
+
+    public function user_store(StoreProductRequest $request)
+    {
+        $user = Auth::getUser($request, Auth::USER);
+        $validated = $request->validated();
+
+        $product = new Product;
+
+        $product->name = $validated['name'] ?? null;
+		$product->slug = Str::slug($validated['name']) . Str::random(6);
+		$product->description = $validated['description'] ?? null;
+		$product->price = $validated['price'] ?? null;
+		$product->download_code = $validated['download_code'] ?? null;
+		$product->initial_stock = $validated['initial_stock'] ?? null;
+		$product->current_stock = $validated['current_stock'] ?? null;
+		$product->img_url = $validated['img_url'] ?? null;
+		$product->file_url = $validated['file_url'] ?? null;
+		$product->user_id = $user->id;
 		$product->category_id = $validated['category_id'] ?? null;
 
         $product->save();

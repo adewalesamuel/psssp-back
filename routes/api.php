@@ -45,11 +45,12 @@ Route::middleware(['auth.api_token:user'])->group(function () {
 
     Route::put('password', [UserController::class, 'user_password']);
 
+    Route::get('products', [ProductController::class, 'user_index']);
+    Route::post('products', [ProductController::class, 'user_store']);
+
     Route::get('orders', [OrderController::class, 'user_index']);
     Route::post('orders', [OrderController::class, 'user_store']);
     Route::put('orders', [OrderController::class, 'user_update']);
-
-
 
 });
 
