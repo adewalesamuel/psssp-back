@@ -12,7 +12,7 @@ use App\Http\Controllers\RoleController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\Auth\ApiUserAuthController;
 use App\Http\Controllers\EbookController;
-
+use App\Http\Controllers\FileUploadController;
 
 /*
 |--------------------------------------------------------------------------
@@ -55,6 +55,7 @@ Route::middleware(['auth.api_token:user'])->group(function () {
     Route::post('orders', [OrderController::class, 'user_store']);
     Route::put('orders', [OrderController::class, 'user_update']);
 
+    Route::post('upload', [FileUploadController::class, 'store']);
 });
 
 Route::prefix('admin')->group(function() {
