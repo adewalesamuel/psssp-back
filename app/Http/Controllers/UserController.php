@@ -93,17 +93,17 @@ class UserController extends Controller
         return response()->json($data);
     }
 
-    public function user_analitycs(Request $request) {
+    public function user_analytics(Request $request) {
         $user = Auth::getUser($request, Auth::USER);
 
         $user_product_id_list = Product::where('user_id', $user->id)
-        ->where('status', 'validated')->pluck('id')->toArray();
+        ->pluck('id')->toArray();
         $user_product_order_list = Order::whereIn('product_id', $user_product_id_list);
         $user_product_list = Product::whereIn('id', $user_product_id_list);
 
         $data = [
             'success' => true,
-            'analitys' => [
+            'analytics' => [
                 'products_count' => count($user_product_id_list),
                 'clients_count' => $user_product_order_list->groupBy('user_id')->count(),
                 'revenu' => $user_product_order_list->sum('amount'),

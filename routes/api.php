@@ -38,7 +38,7 @@ Route::middleware(['auth.api_token:user'])->group(function () {
     Route::post('logout', [ApiUserAuthController::class, 'logout']);
     Route::post('validate', [UserController::class, 'user_validate']);
 
-    Route::get('analitycs', [UserController::class, 'analitycs']);
+    Route::get('analytics', [UserController::class, 'user_analytics']);
 
     Route::get('profile', [UserController::class, 'user_show']);
     Route::put('profile', [UserController::class, 'user_update']);
