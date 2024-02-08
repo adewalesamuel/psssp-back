@@ -5,17 +5,10 @@ namespace App\Http\Controllers\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Password;
-use Illuminate\Auth\Events\PasswordReset;
-use Illuminate\Support\Facades\Hash;
 use App\Models\User;
 use App\Models\Product;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreUserRequest;
-use App\Http\Requests\ForgotPasswordRequest;
-use App\Http\Requests\ResetPasswordRequest;
-use App\Jobs\AdminMailNotificationJob;
-use App\Notifications\UserRegisterNotification;
 use App\Utils;
 
 class ApiUserAuthController extends Controller
@@ -81,37 +74,6 @@ class ApiUserAuthController extends Controller
 
         return response()->json($data);
     }
-
-    // public function forgot_password(ForgotPasswordRequest $request) {
-    //     $validated = $request->validated();
-    //     $status = Password::sendResetLink($validated);
-
-    //     $data = [
-    //         'status' => __($status)
-    //     ];
-
-    //     return response()->json($data, 200);
-    // }
-
-    // public function reset_password(ResetPasswordRequest $request) {
-    //     $validated = $request->validated();
-
-    //     $status = Password::reset(
-    //         $validated,
-    //         function (User $user, string $password) {
-    //             $user->password = $password;
-    //             $user->save();
-
-    //             event(new PasswordReset($user));
-    //         }
-    //     );
-
-    //     $data = [
-    //         'status' => __($status)
-    //     ];
-
-    //     return response()->json($data, 200);
-    // }
 
     public function logout(Request $request) {
         $token = explode(" ", $request->header('Authorization'))[1];
