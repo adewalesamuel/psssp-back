@@ -30,7 +30,7 @@ class OrderController extends Controller
     public function user_index(Request $request) {
         $user =  Auth::getUser($request, Auth::USER);
         $status = $request->input('status');
-        $orders = Order::where('user_id', $user->id):
+        $orders = Order::where('user_id', $user->id)->with(['product']);
 
         if ($status) $orders = $orders->where('status', $status);
 
@@ -70,14 +70,14 @@ class OrderController extends Controller
 		$order->status = $validated['status'] ?? null;
 		$order->product_id = $validated['product_id'] ?? null;
 		$order->user_id = $validated['user_id'] ?? null;
-		
+
         $order->save();
 
         $data = [
             'success'       => true,
             'order'   => $order
         ];
-        
+
         return response()->json($data);
     }
 
@@ -93,14 +93,14 @@ class OrderController extends Controller
         $order->amount = $validated['amount'] ?? null;
         $order->product_id = $validated['product_id'] ?? null;
         $order->user_id = $user->id;
-        
+
         $order->save();
 
         $data = [
             'success'       => true,
             'order'   => $order
         ];
-        
+
         return response()->json($data);
     }
 
@@ -148,14 +148,14 @@ class OrderController extends Controller
 		$order->status = $validated['status'] ?? null;
 		$order->product_id = $validated['product_id'] ?? null;
 		$order->user_id = $validated['user_id'] ?? null;
-		
+
         $order->save();
 
         $data = [
             'success'       => true,
             'order'   => $order
         ];
-        
+
         return response()->json($data);
     }
 
@@ -168,14 +168,14 @@ class OrderController extends Controller
         $order->amount = $validated['amount'] ?? null;
         $order->product_id = $validated['product_id'] ?? null;
         $order->user_id = $user->id;
-        
+
         $order->save();
 
         $data = [
             'success'       => true,
             'order'   => $order
         ];
-        
+
         return response()->json($data);
     }
 
@@ -186,7 +186,7 @@ class OrderController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function destroy(Order $order)
-    {   
+    {
         $order->delete();
 
         $data = [

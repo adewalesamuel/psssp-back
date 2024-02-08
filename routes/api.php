@@ -12,7 +12,7 @@ use App\Http\Controllers\RoleController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\Auth\ApiUserAuthController;
 use App\Http\Controllers\EbookController;
-
+use App\Http\Controllers\FileUploadController;
 
 /*
 |--------------------------------------------------------------------------
@@ -33,24 +33,29 @@ Route::get('categories/{category}', [CategoryController::class, 'show']);
 
 Route::post('login', [ApiUserAuthController::class, 'login']);
 Route::post('register', [ApiUserAuthController::class, 'register']);
-Route::post('logout', [ApiUserAuthController::class, 'logout']);
 
 Route::middleware(['auth.api_token:user'])->group(function () {
+    Route::post('logout', [ApiUserAuthController::class, 'logout']);
     Route::post('validate', [UserController::class, 'user_validate']);
 
-    Route::get('analitycs', [UserController::class, 'analitycs']);
+    Route::get('analytics', [UserController::class, 'user_analytics']);
 
     Route::get('profile', [UserController::class, 'user_show']);
     Route::put('profile', [UserController::class, 'user_update']);
 
     Route::put('password', [UserController::class, 'user_password']);
 
+    Route::get('products', [ProductController::class, 'user_index']);
+    Route::get('products/{slug}', [ProductController::class, 'user_show']);
+    Route::post('products', [ProductController::class, 'user_store']);
+    Route::put('products/{product}', [ProductController::class, 'user_update']);
+    Route::delete('products/{id}', [ProductController::class, 'delete']);
+
     Route::get('orders', [OrderController::class, 'user_index']);
     Route::post('orders', [OrderController::class, 'user_store']);
     Route::put('orders', [OrderController::class, 'user_update']);
 
-
-
+    Route::post('upload', [FileUploadController::class, 'store']);
 });
 
 Route::prefix('admin')->group(function() {

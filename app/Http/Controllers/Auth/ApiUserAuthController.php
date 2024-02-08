@@ -51,15 +51,14 @@ class ApiUserAuthController extends Controller
 		$user->telegram_number = $validated['telegram_number'] ?? null;
 		$user->shop_name = $validated['shop_name'] ?? null;
 		$user->profile_img_url = $validated['profile_img_url'] ?? null;
+        $user->is_active = false;
 		$user->sponsor_code = "CP" . Utils::generateRandAlnum();
         $user->referer_sponsor_code = $validated['referer_sponsor_code'] ?? null;
 		$user->activation_code = "CA" . Utils::generateRandAlnum();
 		$user->country_id = $validated['country_id'] ?? null;
+		$user->api_token = $token;
 
         $user->save();
-
-        $referer = User::where('sponsor_code', $validated['referer_sponsor_code'])->first();
-        $product = Product::where('download_code', $validated['referer_sponsor_code'])->first();
 
         // AdminMailNotificationJob::dispatchAfterResponse(
         //     new UserRegisterNotification($user));
@@ -67,9 +66,7 @@ class ApiUserAuthController extends Controller
         $data = [
             'success'  => true,
             'user'   => $user,
-            'tk' => $token,
-            'referer_id' => $referer ?? $referer->id,
-            'producd_id' => $product ?? $product->id
+            'tk' => $token
         ];
 
         return response()->json($data);
