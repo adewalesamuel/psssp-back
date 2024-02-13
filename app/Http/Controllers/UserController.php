@@ -255,7 +255,7 @@ class UserController extends Controller
         if ($referer) $product_list = Product::where('user_id', $referer->id);
         if ($product) $product_list = Product::where('id', $product->id);
 
-        if ($product_list) {
+        if (isset($product_list)) {
             $order_list = $product_list->get()->map(
                 function($product) use($user) {
                     return [
