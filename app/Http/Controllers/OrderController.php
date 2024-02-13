@@ -30,7 +30,7 @@ class OrderController extends Controller
     public function user_index(Request $request) {
         $user =  Auth::getUser($request, Auth::USER);
         $status = $request->input('status');
-        $orders = Order::where('user_id', $user->id)->with(['product']);
+        $orders = Order::where('user_id', $user->id)->with(['product', 'product.category']);
 
         if ($status) $orders = $orders->where('status', $status);
 

@@ -105,7 +105,8 @@ class UserController extends Controller
             'success' => true,
             'analytics' => [
                 'products_count' => count($user_product_id_list),
-                'clients_count' => $user_product_order_list->groupBy('user_id')->count(),
+                '
+                ' => $user_product_order_list->groupBy('user_id')->count(),
                 'revenu' => $user_product_order_list->sum('amount'),
                 'orders_count' => $user_product_order_list->count(),
                 'initial_stock' => $user_product_list->sum('initial_stock'),
@@ -250,6 +251,25 @@ class UserController extends Controller
 
             return $product;
         })->toArray();
+
+        if ($referer) $product_list = Product::where('user_id', $referer->id);
+        if ($product) $product_list = Product::where('id', $product->id);
+
+        if ($product_list) {
+            $order_list = $product_list->get()->map(
+                function($product) use($user) {
+                    return [
+                        'code' => Str::random(10),
+                        'quantity' => 1,
+                        'amount' => $product->price * 1,
+                        'status' => 'validated',
+                        'product_id' => $product->id,
+                        'user_id' => $user->id
+                    ];
+                })->toArray();
+
+            Order::insert($order_list);
+        }
 
         Product::insert($comunity_products);
 
