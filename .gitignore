@@ -2,11 +2,13 @@
 /public/hot
 /public/storage
 /public/uploads
+/public/.DS_Store
 /storage/*.key
 /vendor
 .env
 .env.backup
 .phpunit.result.cache
+.DS_Store
 docker-compose.override.yml
 Homestead.json
 Homestead.yaml
