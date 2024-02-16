@@ -49,7 +49,7 @@ class PermissionController extends Controller
         $permission = new Permission;
 
         $permission->name = $validated['name'] ?? null;
-		$permission->slug = $validated['slug'] ?? null;
+		$permission->slug = Str::slug($validated['name']);
 		
         $permission->save();
 
@@ -100,7 +100,7 @@ class PermissionController extends Controller
         $validated = $request->validated();
 
         $permission->name = $validated['name'] ?? null;
-		$permission->slug = $validated['slug'] ?? null;
+		$permission->slug = Str::slug($validated['name']);
 		
         $permission->save();
 

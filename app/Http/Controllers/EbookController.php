@@ -49,7 +49,7 @@ class EbookController extends Controller
         $ebook = new Ebook;
 
         $ebook->name = $validated['name'] ?? null;
-		$ebook->slug = $validated['slug'] ?? null;
+		$ebook->slug = Str::slug($validated['name']);
 		$ebook->type = $validated['type'] ?? null;
 		$ebook->download_code = $validated['download_code'] ?? null;
 		$ebook->description = $validated['description'] ?? null;
@@ -107,7 +107,7 @@ class EbookController extends Controller
         $validated = $request->validated();
 
         $ebook->name = $validated['name'] ?? null;
-		$ebook->slug = $validated['slug'] ?? null;
+		$ebook->slug = Str::slug($validated['name']);
 		$ebook->type = $validated['type'] ?? null;
 		$ebook->download_code = $validated['download_code'] ?? null;
 		$ebook->description = $validated['description'] ?? null;

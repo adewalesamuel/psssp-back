@@ -11,6 +11,7 @@ use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\Auth\ApiUserAuthController;
+use App\Http\Controllers\Auth\ApiAdminAuthController;
 use App\Http\Controllers\EbookController;
 use App\Http\Controllers\FileUploadController;
 
@@ -59,11 +60,18 @@ Route::middleware(['auth.api_token:user'])->group(function () {
 });
 
 Route::prefix('admin')->group(function() {
+    Route::post('login', [ApiAdminAuthController::class, 'login']);
+    Route::post('logout', [ApiAdminAuthController::class, 'logout']);
+
     Route::middleware(['auth.api_token:admin'])->group(function () {
+        Route::get('countries', [CountryController::class, 'index']);
+        Route::get('countries/{country}', [CountryController::class, 'show']);
         Route::post('countries', [CountryController::class, 'store']);
         Route::put('countries/{country}', [CountryController::class, 'update']);
         Route::delete('countries/{country}', [CountryController::class, 'destroy']);
 
+        Route::get('categories', [CategoryController::class, 'index']);
+        Route::get('categories/{category}', [CategoryController::class, 'show']);
         Route::post('categories', [CategoryController::class, 'store']);
         Route::put('categories/{category}', [CategoryController::class, 'update']);
         Route::delete('categories/{category}', [CategoryController::class, 'destroy']);

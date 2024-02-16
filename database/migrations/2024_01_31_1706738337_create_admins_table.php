@@ -19,6 +19,7 @@ class CreateAdminsTable extends Migration
 			$table->string('email')->unique();
 			$table->string('password')->unique();
 			$table->string('profile_img_url')->nullable()->default('');
+            $table->string('api_token')->unique()->nullable();
 			$table->foreignId('role_id')
             ->nullable()
 			->constrained()

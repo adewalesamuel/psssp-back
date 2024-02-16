@@ -49,7 +49,7 @@ class RoleController extends Controller
         $role = new Role;
 
         $role->name = $validated['name'] ?? null;
-		$role->slug = $validated['slug'] ?? null;
+		$role->slug = Str::slug($validated['name']);
 		$role->permissions = $validated['permissions'] ?? null;
 		
         $role->save();
@@ -101,7 +101,6 @@ class RoleController extends Controller
         $validated = $request->validated();
 
         $role->name = $validated['name'] ?? null;
-		$role->slug = $validated['slug'] ?? null;
 		$role->permissions = $validated['permissions'] ?? null;
 		
         $role->save();
