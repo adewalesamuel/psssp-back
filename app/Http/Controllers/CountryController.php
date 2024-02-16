@@ -24,7 +24,7 @@ class CountryController extends Controller
             $request->input('page') == '') {
             $countries = $countries->get();
         } else {
-            $countries = $countries->with(['category'])->paginate();
+            $countries = $countries->paginate();
         }
 
         $data = [
