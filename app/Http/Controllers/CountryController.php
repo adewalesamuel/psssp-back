@@ -15,12 +15,21 @@ class CountryController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
+        $countries = Country::where('id', '>', -1)
+        ->orderBy('created_at', 'desc');
+
+        if ($request->input('page') == null || 
+            $request->input('page') == '') {
+            $countries = $countries->get();
+        } else {
+            $countries = $countries->with(['category'])->paginate();
+        }
+
         $data = [
             'success' => true,
-            'countries' => Country::where('id', '>', -1)
-            ->orderBy('created_at', 'desc')->get()
+            'countries' => $countries
         ];
 
         return response()->json($data);

@@ -20,7 +20,7 @@ class OrderController extends Controller
     {
         $data = [
             'success' => true,
-            'orders' => Order::where('id', '>', -1)
+            'orders' => Order::with(['product', 'user'])
             ->orderBy('created_at', 'desc')->paginate()
         ];
 
@@ -30,7 +30,8 @@ class OrderController extends Controller
     public function user_index(Request $request) {
         $user =  Auth::getUser($request, Auth::USER);
         $status = $request->input('status');
-        $orders = Order::where('user_id', $user->id)->with(['product', 'product.category']);
+        $orders = Order::where('user_id', $user->id)
+        ->with(['product', 'product.category']);
 
         if ($status) $orders = $orders->where('status', $status);
 
@@ -64,10 +65,10 @@ class OrderController extends Controller
 
         $order = new Order;
 
-        $order->code = $validated['code'] ?? null;
+        $order->code = strtoupper(Str::random(10));
 		$order->quantity = $validated['quantity'] ?? null;
 		$order->amount = $validated['amount'] ?? null;
-		$order->status = $validated['status'] ?? null;
+		$order->status = $validated['status'] ?? 'pending';
 		$order->product_id = $validated['product_id'] ?? null;
 		$order->user_id = $validated['user_id'] ?? null;
 
@@ -142,7 +143,6 @@ class OrderController extends Controller
     {
         $validated = $request->validated();
 
-        $order->code = $validated['code'] ?? null;
 		$order->quantity = $validated['quantity'] ?? null;
 		$order->amount = $validated['amount'] ?? null;
 		$order->status = $validated['status'] ?? null;

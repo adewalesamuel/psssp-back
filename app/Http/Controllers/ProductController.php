@@ -17,12 +17,21 @@ class ProductController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
+        $products = Product::where('id', '>', -1)
+        ->orderBy('created_at', 'desc');
+
+        if ($request->input('page') == null || 
+            $request->input('page') == '') {
+            $products = $products->get();
+        } else {
+            $products = $products->with(['category'])->paginate();
+        }
+
         $data = [
             'success' => true,
-            'products' => Product::where('id', '>', -1)
-            ->with(['category'])->orderBy('created_at', 'desc')->paginate()
+            'products' => $products
         ];
 
         return response()->json($data);

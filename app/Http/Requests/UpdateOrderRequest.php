@@ -24,7 +24,6 @@ class UpdateOrderRequest extends FormRequest
     public function rules()
     {
         return [
-            'code' => 'nullable|string|unique:orders',
 			'quantity' => 'nullable|integer',
 			'amount' => 'nullable|integer',
 			'status' => 'nullable|string',

@@ -24,7 +24,6 @@ class StoreOrderRequest extends FormRequest
     public function rules()
     {
         return [
-            'code' => 'nullable|string|unique:orders',
 			'quantity' => 'required|integer',
 			'amount' => 'required|integer',
 			'status' => 'nullable|string',

@@ -11,6 +11,7 @@ use App\Http\Requests\UpdatePasswordRequest;
 use App\Models\Order;
 use App\Models\Product;
 use Illuminate\Support\Str;
+use App\Utils;
 
 
 class UserController extends Controller
@@ -24,7 +25,7 @@ class UserController extends Controller
     {
         $data = [
             'success' => true,
-            'users' => User::where('id', '>', -1)
+            'users' => User::with(['country'])
             ->orderBy('created_at', 'desc')->paginate()
         ];
 
@@ -62,9 +63,10 @@ class UserController extends Controller
 		$user->telegram_number = $validated['telegram_number'] ?? null;
 		$user->shop_name = $validated['shop_name'] ?? null;
 		$user->profile_img_url = $validated['profile_img_url'] ?? null;
-		$user->is_active = $validated['is_active'] ?? null;
-		$user->sponsor_code = $validated['sponsor_code'] ?? null;
-		$user->activation_code = $validated['activation_code'] ?? null;
+		$user->is_active = $validated['is_active'] ?? false;
+        $user->sponsor_code = "CP" . Utils::generateRandAlnum();
+        $user->referer_sponsor_code = $validated['referer_sponsor_code'] ?? null;
+        $user->activation_code = "CA" . Utils::generateRandAlnum();
 		$user->country_id = $validated['country_id'] ?? null;
 
         $user->save();

@@ -15,12 +15,21 @@ class CategoryController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
+        $categories = Category::where('id', '>', -1)
+        ->orderBy('created_at', 'desc');
+
+        if ($request->input('page') == null || 
+            $request->input('page') == '') {
+            $categories = $categories->get();
+        } else {
+            $categories = $categories->with(['category'])->paginate();
+        }
+
         $data = [
             'success' => true,
-            'categories' => Category::where('id', '>', -1)
-            ->orderBy('created_at', 'desc')->get()
+            'categories' => $categories
         ];
 
         return response()->json($data);
