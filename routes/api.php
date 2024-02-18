@@ -64,6 +64,8 @@ Route::prefix('admin')->group(function() {
     Route::post('logout', [ApiAdminAuthController::class, 'logout']);
 
     Route::middleware(['auth.api_token:admin'])->group(function () {
+        Route::post('upload', [FileUploadController::class, 'store']);
+
         Route::get('countries', [CountryController::class, 'index']);
         Route::get('countries/{country}', [CountryController::class, 'show']);
         Route::post('countries', [CountryController::class, 'store']);
