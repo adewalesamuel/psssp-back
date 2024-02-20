@@ -156,7 +156,6 @@ class UserController extends Controller
 
         $user->fullname = $validated['fullname'] ?? null;
 		$user->email = $validated['email'] ?? null;
-		$user->password = $validated['password'] ?? null;
 		$user->phone_number = $validated['phone_number'] ?? null;
 		$user->backup_number = $validated['backup_number'] ?? null;
 		$user->whatsapp_number = $validated['whatsapp_number'] ?? null;
@@ -164,8 +163,6 @@ class UserController extends Controller
 		$user->shop_name = $validated['shop_name'] ?? null;
 		$user->profile_img_url = $validated['profile_img_url'] ?? null;
 		$user->is_active = $validated['is_active'] ?? null;
-		$user->sponsor_code = $validated['sponsor_code'] ?? null;
-		$user->activation_code = $validated['activation_code'] ?? null;
 		$user->country_id = $validated['country_id'] ?? null;
 
         $user->save();
