@@ -8,7 +8,7 @@
     <link rel="shortcut icon" type="image/x-icon" href="../../../app-assets/images/ico/favicon.ico">
     <link href="https://fonts.googleapis.com/css?family=Rubik:300,400,500,600%7CIBM+Plex+Sans:300,400,500,600,700" rel="stylesheet">
 
-    <script type="module" crossorigin src="/user/assets/index-C8Dvpb9w.js"></script>
+    <script type="module" crossorigin src="/user/assets/index-bfymZl0L.js"></script>
     <link rel="stylesheet" crossorigin href="/user/assets/index-sN98sOqe.css">
   </head>
   <body>
