@@ -37,24 +37,24 @@ Route::post('register', [ApiUserAuthController::class, 'register']);
 
 Route::middleware(['auth.api_token:user'])->group(function () {
     Route::post('logout', [ApiUserAuthController::class, 'logout']);
-    Route::post('validate', [UserController::class, 'user_validate']);
+    Route::post('validate', [UserController::class, 'account_validate']);
 
-    Route::get('analytics', [UserController::class, 'user_analytics']);
+    Route::get('analytics', [UserController::class, 'account_analytics']);
 
-    Route::get('profile', [UserController::class, 'user_show']);
-    Route::put('profile', [UserController::class, 'user_update']);
+    Route::get('profile', [UserController::class, 'account_show']);
+    Route::put('profile', [UserController::class, 'account_update']);
 
-    Route::put('password', [UserController::class, 'user_password']);
+    Route::put('password', [UserController::class, 'account_password']);
 
-    Route::get('products', [ProductController::class, 'user_index']);
-    Route::get('products/{slug}', [ProductController::class, 'user_show']);
-    Route::post('products', [ProductController::class, 'user_store']);
-    Route::put('products/{product}', [ProductController::class, 'user_update']);
+    Route::get('products', [ProductController::class, 'account_index']);
+    Route::get('products/{slug}', [ProductController::class, 'account_show']);
+    Route::post('products', [ProductController::class, 'account_store']);
+    Route::put('products/{product}', [ProductController::class, 'account_update']);
     Route::delete('products/{id}', [ProductController::class, 'delete']);
 
-    Route::get('orders', [OrderController::class, 'user_index']);
-    Route::post('orders', [OrderController::class, 'user_store']);
-    Route::put('orders', [OrderController::class, 'user_update']);
+    Route::get('orders', [OrderController::class, 'account_index']);
+    Route::post('orders', [OrderController::class, 'account_store']);
+    Route::put('orders', [OrderController::class, 'account_update']);
 
     Route::post('upload', [FileUploadController::class, 'store']);
 });

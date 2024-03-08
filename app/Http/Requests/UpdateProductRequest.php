@@ -33,7 +33,7 @@ class UpdateProductRequest extends FormRequest
 			'current_stock' => 'nullable|integer',
 			'img_url' => 'nullable|string',
 			'file_url' => 'nullable|string',
-			'user_id' => 'nullable|integer|exists:users,id',
+			'account_id' => 'nullable|integer|exists:accounts,id',
 			'category_id' => 'nullable|integer|exists:categories,id',
 
         ];

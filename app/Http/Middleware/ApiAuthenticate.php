@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use App\Models\User;
+use App\Models\Account;
 use App\Models\Admin;
 use Closure;
 use Illuminate\Support\Arr;
@@ -29,9 +30,9 @@ class ApiAuthenticate
                 $user = Admin::where("api_token", $token);
                 break;
             case 'user':
-                $user = User::where("api_token", $token);
+                $user = Account::where("api_token", $token);
             default:
-                $user = User::where("api_token", $token);
+                $user = Account::where("api_token", $token);
                 break;
         }
 

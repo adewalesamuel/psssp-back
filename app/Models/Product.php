@@ -8,6 +8,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Product extends Model
 {
+	use HasFactory, SoftDeletes;
+
     protected $guarded = [
         'id',
         'deleted_at',
@@ -15,11 +17,9 @@ class Product extends Model
         'created_at'
     ];
 
-    use HasFactory, SoftDeletes;
-
-	public function user()
+	public function account()
 	{
-		return $this->belongsTo(User::class);
+		return $this->belongsTo(Account::class);
 	}
 	public function category()
 	{

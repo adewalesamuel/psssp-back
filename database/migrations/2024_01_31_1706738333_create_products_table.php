@@ -25,7 +25,7 @@ class CreateProductsTable extends Migration
 			$table->string('img_url')->nullable()->default('');
 			$table->string('file_url')->nullable()->default('');
 			$table->boolean('is_public')->default(false);
-			$table->foreignId('user_id')
+			$table->foreignId('account_id')
             ->nullable()
 			->constrained()
 			->nullOnDelete();

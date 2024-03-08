@@ -39,11 +39,11 @@ class ProductController extends Controller
 
     public function user_index(Request $request)
     {
-        $user = Auth::getUser($request, Auth::USER);
+        $account = Auth::getUser($request, Auth::ACCOUNT);
 
         $data = [
             'success' => true,
-            'products' => Product::where('user_id', $user->id)
+            'products' => Product::where('account_id', $account->id)
             ->with(['category'])->orderBy('created_at', 'desc')->paginate()
         ];
 
@@ -81,7 +81,7 @@ class ProductController extends Controller
 		$product->current_stock = $validated['current_stock'] ?? null;
 		$product->img_url = $validated['img_url'] ?? null;
 		$product->file_url = $validated['file_url'] ?? null;
-		$product->user_id = $validated['user_id'] ?? null;
+		$product->account_id = $validated['account_id'] ?? null;
 		$product->category_id = $validated['category_id'] ?? null;
 
         $product->save();
@@ -96,7 +96,7 @@ class ProductController extends Controller
 
     public function user_store(StoreProductRequest $request)
     {
-        $user = Auth::getUser($request, Auth::USER);
+        $account = Auth::getUser($request, Auth::ACCOUNT);
         $validated = $request->validated();
 
         $product = new Product;
@@ -110,7 +110,7 @@ class ProductController extends Controller
 		$product->current_stock = $validated['current_stock'] ?? null;
 		$product->img_url = $validated['img_url'] ?? null;
 		$product->file_url = $validated['file_url'] ?? null;
-		$product->user_id = $user->id;
+		$product->account_id = $account->id;
 		$product->category_id = $validated['category_id'] ?? null;
 
         $product->save();
@@ -141,11 +141,11 @@ class ProductController extends Controller
 
     public function user_show(Request $request, string $slug)
     {
-        $user = Auth::getUser($request, Auth::USER);
+        $account = Auth::getUser($request, Auth::ACCOUNT);
 
         $data = [
             'success' => true,
-            'product' => Product::where('user_id', $user->id)
+            'product' => Product::where('account_id', $account->id)
             ->where('slug', $slug)->firstOrFail()
         ];
 
@@ -182,7 +182,7 @@ class ProductController extends Controller
 		$product->current_stock = $validated['current_stock'] ?? null;
 		$product->img_url = $validated['img_url'] ?? null;
 		$product->file_url = $validated['file_url'] ?? null;
-		$product->user_id = $validated['user_id'] ?? null;
+		$product->account_id = $validated['account_id'] ?? null;
 		$product->category_id = $validated['category_id'] ?? null;
 
         $product->save();
@@ -197,7 +197,7 @@ class ProductController extends Controller
 
     public function user_update(UpdateProductRequest $request, Product $product)
     {
-        $user = Auth::getUser($request, Auth::USER);
+        $account = Auth::getUser($request, Auth::ACCOUNT);
         $validated = $request->validated();
 
         $product->name = $validated['name'] ?? null;
@@ -207,7 +207,7 @@ class ProductController extends Controller
 		$product->current_stock = $validated['current_stock'] ?? null;
 		$product->img_url = $validated['img_url'] ?? null;
 		$product->file_url = $validated['file_url'] ?? null;
-		$product->user_id = $user->id;
+		$product->account_id = $account->id;
 		$product->category_id = $validated['category_id'] ?? null;
 
         $product->save();
