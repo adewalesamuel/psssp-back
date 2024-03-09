@@ -26,7 +26,7 @@ class Auth {
             case self::USER:
                 $user = self::getUserByToken($token);
                 break;
-            case self::USER:
+            case self::ACCOUNT:
                 $user = self::getAccountByToken($token);
                 break;
             default:

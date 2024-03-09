@@ -24,7 +24,7 @@ class AccountValidateRequest extends FormRequest
     public function rules()
     {
         return [
-            'activation_code' => 'required|string|exists:users'
+            'activation_code' => 'required|string|exists:accounts'
         ];
     }
 }

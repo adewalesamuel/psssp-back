@@ -30,12 +30,12 @@ class StoreAccountRequest extends FormRequest
             'backup_number' => 'required|string',
             'whatsapp_number' => 'required|string',
             'telegram_number' => 'required|string',
-            'shop_name' => 'required|string',
+            'shop_name' => 'required|string|unique:accounts',
             'profile_img_url' => 'nullable|string',
             'referer_sponsor_code' => 'nullable|string|exists:users,sponsor_code',
             'country_id' => 'required|integer|exists:countries,id',
-            'user_id' => 'nullable|string|exists:users,id',
-            'phone_number' => 'required|string|unique:users',
+            'user_id' => 'nullable|integer|exists:users,id',
+            'phone_number' => 'required|string',
         ];
     }
 }

@@ -13,6 +13,8 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\Auth\ApiUserAuthController;
 use App\Http\Controllers\Auth\ApiAdminAuthController;
 use App\Http\Controllers\EbookController;
+use App\Http\Controllers\AccountController;
+use App\Http\Controllers\AccountSponsorController;
 use App\Http\Controllers\FileUploadController;
 
 /*
@@ -57,6 +59,8 @@ Route::middleware(['auth.api_token:user'])->group(function () {
     Route::put('orders', [OrderController::class, 'account_update']);
 
     Route::post('upload', [FileUploadController::class, 'store']);
+
+    Route::get('accounts/{account_id}/sponsor', [AccountSponsorController::class, 'account_sponsor_show']);
 });
 
 Route::prefix('admin')->group(function() {
@@ -83,6 +87,14 @@ Route::prefix('admin')->group(function() {
         Route::get('users/{user}', [UserController::class, 'show']);
         Route::put('users/{user}', [UserController::class, 'update']);
         Route::delete('users/{user}', [UserController::class, 'destroy']);
+
+        Route::get('accounts', [AccountController::class, 'index']);
+        Route::post('accounts', [AccountController::class, 'store']);
+        Route::get('accounts/{account}', [AccountController::class, 'show']);
+        Route::put('accounts/{account}', [AccountController::class, 'update']);
+        Route::delete('accounts/{account}', [AccountController::class, 'destroy']);
+
+        Route::get('accounts/{account_id}/sponsor', [AccountSponsorController::class, 'account_sponsor_show']);
 
         Route::get('products', [ProductController::class, 'index']);
         Route::post('products', [ProductController::class, 'store']);

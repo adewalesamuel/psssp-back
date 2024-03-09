@@ -20,7 +20,7 @@ class AccountController extends Controller
     {
         $data = [
             'success' => true,
-            'accounts' => Account::with(['country'])
+            'accounts' => Account::with(['country', 'user'])
             ->orderBy('created_at', 'desc')->paginate()
         ];
 

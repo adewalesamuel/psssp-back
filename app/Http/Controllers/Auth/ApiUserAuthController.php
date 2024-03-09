@@ -6,8 +6,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use App\Models\User;
-use App\Models\account;
+use App\Models\Account;
 use App\Models\Product;
+use App\Models\AccountSponsor;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreAccountRequest;
 use App\Utils;
@@ -32,6 +33,7 @@ class ApiUserAuthController extends Controller
         $data = [
             "success" => true,
             "account" => $account,
+            "user" => User::find($account->user_id),
             "tk" => $account->api_token
         ];
 
@@ -75,28 +77,20 @@ class ApiUserAuthController extends Controller
 
             $account->save();
 
-            if (isset($validated['referer_sponsor_code'])) {
-                $sponsor = Account::where('sponsor_code', 
-                    $validated['referer_sponsor_code'])->first();
-
-                $sponsor->num_code_use->increment();
-                $sponsor->save();
-            } else {
-                //Chose random user
-            }
-
-            //Send activation code push notif
+            $sponsor = $this->_assign_sponsor_to_account($account, 
+                $validated['referer_sponsor_code']);
 
             DB::commit();
         } catch(\Exception $e) {
             Db::rollback();
-            throw new \Exception($e);
+            throw new \Exception($e->getMessage());
         }
 
         
         $data = [
             'success'  => true,
             'account'   => $account,
+            'user' => $user,
             'tk' => $token
         ];
 
@@ -116,6 +110,39 @@ class ApiUserAuthController extends Controller
         ];
 
         return response()->json($data, 200);
+    }
+
+    private function _assign_sponsor_to_account(
+        Account $account, 
+        $referer_sponsor_code): User {
+
+        if (isset($referer_sponsor_code)) {
+            $sponsor = User::where('sponsor_code', 
+                $referer_sponsor_code)->first();
+
+            $sponsor->increment('num_code_use');
+            $sponsor->save();
+        } else {
+            $sponsor_id_list = collect(User::where('id', '!=', $account->id)->get())
+            ->map(function($sponsor) {
+                return $sponsor->id;
+            });
+
+            $random_sponsor_id = $sponsor_id_list[rand(0, count($sponsor_id_list) - 1)];
+            $sponsor = User::find($random_sponsor_id);
+        }
+
+        if (!$sponsor)
+            throw new \Exception("no sponsor found", 1);
+            
+        $account_sponsor = new AccountSponsor;
+
+        $account_sponsor->user_id = $sponsor->id;
+        $account_sponsor->account_id = $account->id;
+
+        $account_sponsor->save();
+
+        return $sponsor;
     }
 
 }
