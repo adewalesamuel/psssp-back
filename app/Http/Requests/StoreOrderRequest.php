@@ -28,7 +28,7 @@ class StoreOrderRequest extends FormRequest
 			'amount' => 'required|integer',
 			'status' => 'nullable|string',
 			'product_id' => 'required|integer|exists:products,id',
-			'user_id' => 'nullable|integer|exists:users,id',
+			'account_id' => 'nullable|integer|exists:accounts,id',
 
         ];
     }

@@ -82,7 +82,7 @@ class ApiUserAuthController extends Controller
 
             DB::commit();
         } catch(\Exception $e) {
-            Db::rollback();
+            DB::rollback();
             throw new \Exception($e->getMessage());
         }
 

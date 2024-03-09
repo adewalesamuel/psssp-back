@@ -37,7 +37,7 @@ class ProductController extends Controller
         return response()->json($data);
     }
 
-    public function user_index(Request $request)
+    public function account_index(Request $request)
     {
         $account = Auth::getUser($request, Auth::ACCOUNT);
 
@@ -83,6 +83,7 @@ class ProductController extends Controller
 		$product->file_url = $validated['file_url'] ?? null;
 		$product->account_id = $validated['account_id'] ?? null;
 		$product->category_id = $validated['category_id'] ?? null;
+        $product->is_public = $validated['is_public'] ?? false;
 
         $product->save();
 
@@ -94,7 +95,7 @@ class ProductController extends Controller
         return response()->json($data);
     }
 
-    public function user_store(StoreProductRequest $request)
+    public function account_store(StoreProductRequest $request)
     {
         $account = Auth::getUser($request, Auth::ACCOUNT);
         $validated = $request->validated();
@@ -112,6 +113,7 @@ class ProductController extends Controller
 		$product->file_url = $validated['file_url'] ?? null;
 		$product->account_id = $account->id;
 		$product->category_id = $validated['category_id'] ?? null;
+        $product->is_public = $validated['is_public'] ?? false;
 
         $product->save();
 
@@ -139,7 +141,7 @@ class ProductController extends Controller
         return response()->json($data);
     }
 
-    public function user_show(Request $request, string $slug)
+    public function account_show(Request $request, string $slug)
     {
         $account = Auth::getUser($request, Auth::ACCOUNT);
 
@@ -184,6 +186,7 @@ class ProductController extends Controller
 		$product->file_url = $validated['file_url'] ?? null;
 		$product->account_id = $validated['account_id'] ?? null;
 		$product->category_id = $validated['category_id'] ?? null;
+        $product->is_public = $validated['is_public'] ?? false;
 
         $product->save();
 
@@ -195,7 +198,7 @@ class ProductController extends Controller
         return response()->json($data);
     }
 
-    public function user_update(UpdateProductRequest $request, Product $product)
+    public function account_update(UpdateProductRequest $request, Product $product)
     {
         $account = Auth::getUser($request, Auth::ACCOUNT);
         $validated = $request->validated();
@@ -209,6 +212,7 @@ class ProductController extends Controller
 		$product->file_url = $validated['file_url'] ?? null;
 		$product->account_id = $account->id;
 		$product->category_id = $validated['category_id'] ?? null;
+        $product->is_public = $validated['is_public'] ?? false;
 
         $product->save();
 

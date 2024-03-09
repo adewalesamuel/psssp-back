@@ -28,9 +28,9 @@ class OrderController extends Controller
     }
 
     public function user_index(Request $request) {
-        $user =  Auth::getUser($request, Auth::USER);
+        $account =  Auth::getUser($request, Auth::ACCOUNT);
         $status = $request->input('status');
-        $orders = Order::where('user_id', $user->id)
+        $orders = Order::where('user_id', $account->id)
         ->with(['product', 'product.category']);
 
         if ($status) $orders = $orders->where('status', $status);
@@ -84,7 +84,7 @@ class OrderController extends Controller
 
     public function user_store(StoreOrderRequest $request)
     {
-        $user =  Auth::getUser($request, Auth::USER);
+        $account =  Auth::getUser($request, Auth::ACCOUNT);
         $validated = $request->validated();
 
         $order = new Order;
@@ -93,7 +93,7 @@ class OrderController extends Controller
         $order->quantity = $validated['quantity'] ?? null;
         $order->amount = $validated['amount'] ?? null;
         $order->product_id = $validated['product_id'] ?? null;
-        $order->user_id = $user->id;
+        $order->user_id = $account->id;
 
         $order->save();
 
@@ -161,13 +161,13 @@ class OrderController extends Controller
 
     public function user_update(UpdateOrderRequest $request, Order $order)
     {
-        $user =  Auth::getUser($request, Auth::USER);
+        $account =  Auth::getUser($request, Auth::ACCOUNT);
         $validated = $request->validated();
 
         $order->quantity = $validated['quantity'] ?? null;
         $order->amount = $validated['amount'] ?? null;
         $order->product_id = $validated['product_id'] ?? null;
-        $order->user_id = $user->id;
+        $order->user_id = $account->id;
 
         $order->save();
 

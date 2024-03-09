@@ -28,8 +28,7 @@ class UpdateOrderRequest extends FormRequest
 			'amount' => 'nullable|integer',
 			'status' => 'nullable|string',
 			'product_id' => 'nullable|integer|exists:products,id',
-			'user_id' => 'nullable|integer|exists:users,id',
-
+            'account_id' => 'nullable|integer|exists:accounts,id',
         ];
     }
 }

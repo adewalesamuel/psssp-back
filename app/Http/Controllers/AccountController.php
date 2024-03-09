@@ -11,8 +11,11 @@ use App\Http\Requests\AccountValidateRequest;
 use App\Http\Requests\UpdatePasswordRequest;
 use App\Models\Order;
 use App\Models\Product;
+use App\Models\Category;
+use App\Models\AccountSponsor;
 use Illuminate\Support\Str;
 use App\Utils;
+use Illuminate\Support\Facades\DB;
 
 class AccountController extends Controller
 {
@@ -89,7 +92,7 @@ class AccountController extends Controller
     }
 
     public function account_analytics(Request $request) {
-        $account = Auth::User($request, Auth::ACCOUNT);
+        $account = Auth::getUser($request, Auth::ACCOUNT);
 
         $account_product_id_list = Product::where('account_id', $account->id)
         ->pluck('id')->toArray();
@@ -115,7 +118,9 @@ class AccountController extends Controller
 
     public function account_show(Request $request)
     {
-        $account = Auth::User($request, Auth::ACCOUNT);
+        $account = Auth::getUser($request, Auth::ACCOUNT);
+
+        $account->user;
 
         $data = [
             'success' => true,
@@ -171,18 +176,18 @@ class AccountController extends Controller
 
     public function account_update(UpdateAccountRequest $request)
     {
-        $account = Auth::User($request, Auth::ACCOUNT);
+        $account = Auth::getUser($request, Auth::ACCOUNT);
         $validated = $request->validated();
 
         $account->fullname = $validated['fullname'] ?? null;
         $account->email = $validated['email'] ?? null;
-        $account->password = $validated['password'] ?? null;
         $account->backup_number = $validated['backup_number'] ?? null;
         $account->whatsapp_number = $validated['whatsapp_number'] ?? null;
         $account->telegram_number = $validated['telegram_number'] ?? null;
         $account->shop_name = $validated['shop_name'] ?? null;
         $account->profile_img_url = $validated['profile_img_url'] ?? null;
-        $account->referer_sponsor_code = $validated['referer_sponsor_code'] ?? null;
+        $account->referer_sponsor_code = $validated['referer_sponsor_code'] ?? 
+        $account->referer_sponsor_code;
         $account->country_id = $validated['country_id'] ?? null;
 
         $account->save();
@@ -198,11 +203,11 @@ class AccountController extends Controller
     public function account_password(UpdatePasswordRequest $request)
     {
         $validated = $request->validated();
-        $user = Auth::getUser($request, Auth::ACCOUNT);
+        $account = Auth::getUser($request, Auth::ACCOUNT);
 
-        $user->password = $validated['passowrd'];
+        $account->password = $validated['passowrd'];
 
-        $user->save();
+        $account->save();
 
         $data = [
             'success' => true,
@@ -214,7 +219,7 @@ class AccountController extends Controller
 
     public function account_validate(AccountValidateRequest $request) {
         $validated = $request->validated();
-        $account = Auth::User($request, Auth::ACCOUNT);
+        $account = Auth::getUser($request, Auth::ACCOUNT);
 
         if ($account->activation_code != $validated['activation_code']) {
             $data = [
@@ -225,9 +230,59 @@ class AccountController extends Controller
             return response()->json($data, 400);
         }
 
-        $account->is_active = true;
+        DB::beginTransaction();
 
-        $account->save();
+        try {
+            $account->is_active = true;
+
+            $account->save();
+
+            $ebook_category = Category::where('slug', 'like', '%ebook%')
+            ->orWhere('slug', 'like', '%e-book%')->firstOrFail();
+
+            $ebook_sub_category_id_list = collect(Category::where('category_id', 
+                $ebook_category->id)->get())->map(function($sub_category) {
+                return $sub_category->id;
+            });
+
+            $products = [
+                Product::where('category_id', 
+                    $ebook_sub_category_id_list[0])->firstOrFail(),
+                Product::where('category_id', 
+                    $ebook_sub_category_id_list[1])->firstOrFail(),
+                Product::where('category_id', 
+                    $ebook_sub_category_id_list[2])->firstOrFail(),
+                Product::where('category_id', 
+                    $ebook_sub_category_id_list[3])->firstOrFail(),
+            ];
+
+            //Create order
+
+            // foreach ($products as $product) {
+            //     $product->account_id = $account->id;
+
+            //     $product->save();
+            // }
+
+
+            if ($account->referer_sponsor_code) {
+                $account_sponsor = AccountSponsor::where('account_id', 
+                $account->id)->firstOrFail();
+
+                $sponsor_account = Account::where('user_id', 
+                    $account_sponsor->user->id)->latest()->get();
+
+                $product = Product::where('account_id', 
+                    $sponsor_account->id)->firstOrFail();
+
+                $product->delete();
+            }
+
+            DB::commit();
+        } catch(\Exception $e) {
+            DB::rollback();
+            throw new \Exception($e->getMessage());
+        }
 
         $data = [
             'success' => true,

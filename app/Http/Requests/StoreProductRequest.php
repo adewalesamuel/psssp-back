@@ -33,6 +33,7 @@ class StoreProductRequest extends FormRequest
 			'current_stock' => 'required|integer',
 			'img_url' => 'nullable|string',
 			'file_url' => 'required|string',
+            'is_public' => 'nullable|boolean',
 			'account_id' => 'nullable|integer|exists:accounts,id',
 			'category_id' => 'required|integer|exists:categories,id',
 

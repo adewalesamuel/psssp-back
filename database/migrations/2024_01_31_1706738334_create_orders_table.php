@@ -22,7 +22,7 @@ class CreateOrdersTable extends Migration
 			$table->foreignId('product_id')
 			->constrained()
 			->onDelete('cascade');
-			$table->foreignId('user_id')
+			$table->foreignId('account_id')
 			->constrained()
 			->onDelete('cascade');
 			$table->softDeletes();

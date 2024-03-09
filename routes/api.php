@@ -39,14 +39,14 @@ Route::post('register', [ApiUserAuthController::class, 'register']);
 
 Route::middleware(['auth.api_token:user'])->group(function () {
     Route::post('logout', [ApiUserAuthController::class, 'logout']);
-    Route::post('validate', [UserController::class, 'account_validate']);
+    Route::post('validate', [AccountController::class, 'account_validate']);
 
-    Route::get('analytics', [UserController::class, 'account_analytics']);
+    Route::get('analytics', [AccountController::class, 'account_analytics']);
 
-    Route::get('profile', [UserController::class, 'account_show']);
-    Route::put('profile', [UserController::class, 'account_update']);
+    Route::get('profile', [AccountController::class, 'account_show']);
+    Route::put('profile', [AccountController::class, 'account_update']);
 
-    Route::put('password', [UserController::class, 'account_password']);
+    Route::put('password', [AccountController::class, 'account_password']);
 
     Route::get('products', [ProductController::class, 'account_index']);
     Route::get('products/{slug}', [ProductController::class, 'account_show']);
