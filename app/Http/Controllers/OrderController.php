@@ -27,10 +27,10 @@ class OrderController extends Controller
         return response()->json($data);
     }
 
-    public function user_index(Request $request) {
+    public function account_index(Request $request) {
         $account =  Auth::getUser($request, Auth::ACCOUNT);
         $status = $request->input('status');
-        $orders = Order::where('user_id', $account->id)
+        $orders = Order::where('account_id', $account->id)
         ->with(['product', 'product.category']);
 
         if ($status) $orders = $orders->where('status', $status);
@@ -70,7 +70,7 @@ class OrderController extends Controller
 		$order->amount = $validated['amount'] ?? null;
 		$order->status = $validated['status'] ?? 'pending';
 		$order->product_id = $validated['product_id'] ?? null;
-		$order->user_id = $validated['user_id'] ?? null;
+		$order->account_id = $validated['account_id'] ?? null;
 
         $order->save();
 
@@ -82,7 +82,7 @@ class OrderController extends Controller
         return response()->json($data);
     }
 
-    public function user_store(StoreOrderRequest $request)
+    public function account_store(StoreOrderRequest $request)
     {
         $account =  Auth::getUser($request, Auth::ACCOUNT);
         $validated = $request->validated();
@@ -93,7 +93,7 @@ class OrderController extends Controller
         $order->quantity = $validated['quantity'] ?? null;
         $order->amount = $validated['amount'] ?? null;
         $order->product_id = $validated['product_id'] ?? null;
-        $order->user_id = $account->id;
+        $order->account_id = $account->id;
 
         $order->save();
 
@@ -147,7 +147,7 @@ class OrderController extends Controller
 		$order->amount = $validated['amount'] ?? null;
 		$order->status = $validated['status'] ?? null;
 		$order->product_id = $validated['product_id'] ?? null;
-		$order->user_id = $validated['user_id'] ?? null;
+		$order->account_id = $validated['account_id'] ?? null;
 
         $order->save();
 
@@ -159,7 +159,7 @@ class OrderController extends Controller
         return response()->json($data);
     }
 
-    public function user_update(UpdateOrderRequest $request, Order $order)
+    public function account_update(UpdateOrderRequest $request, Order $order)
     {
         $account =  Auth::getUser($request, Auth::ACCOUNT);
         $validated = $request->validated();
@@ -167,7 +167,7 @@ class OrderController extends Controller
         $order->quantity = $validated['quantity'] ?? null;
         $order->amount = $validated['amount'] ?? null;
         $order->product_id = $validated['product_id'] ?? null;
-        $order->user_id = $account->id;
+        $order->account_id = $account->id;
 
         $order->save();
 

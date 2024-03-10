@@ -11,6 +11,7 @@ use App\Http\Requests\AccountValidateRequest;
 use App\Http\Requests\UpdatePasswordRequest;
 use App\Models\Order;
 use App\Models\Product;
+use App\Models\Ebook;
 use App\Models\Category;
 use App\Models\AccountSponsor;
 use Illuminate\Support\Str;
@@ -103,8 +104,7 @@ class AccountController extends Controller
             'success' => true,
             'analytics' => [
                 'products_count' => count($account_product_id_list),
-                '
-                ' => $account_product_order_list->groupBy('account_id')->count(),
+                'clients_count' => $account_product_order_list->groupBy('account_id')->count(),
                 'revenu' => $account_product_order_list->sum('amount'),
                 'orders_count' => $account_product_order_list->count(),
                 'initial_stock' => $account_product_list->sum('initial_stock'),
@@ -237,33 +237,24 @@ class AccountController extends Controller
 
             $account->save();
 
-            $ebook_category = Category::where('slug', 'like', '%ebook%')
-            ->orWhere('slug', 'like', '%e-book%')->firstOrFail();
+            $product_list = $this->_get_unique_ebook_product_list();
 
-            $ebook_sub_category_id_list = collect(Category::where('category_id', 
-                $ebook_category->id)->get())->map(function($sub_category) {
-                return $sub_category->id;
-            });
+            $order_list = [];
 
-            $products = [
-                Product::where('category_id', 
-                    $ebook_sub_category_id_list[0])->firstOrFail(),
-                Product::where('category_id', 
-                    $ebook_sub_category_id_list[1])->firstOrFail(),
-                Product::where('category_id', 
-                    $ebook_sub_category_id_list[2])->firstOrFail(),
-                Product::where('category_id', 
-                    $ebook_sub_category_id_list[3])->firstOrFail(),
-            ];
+            foreach ($product_list as $product) {
+                $order_list[] = [
+                    'code' => strtoupper(Str::random(10)),
+                    'quantity' => 1,
+                    'amount' => $product->price ?? 0,
+                    'status' => 'validated',
+                    'product_id' => $product->id,
+                    'account_id' => $account->id
+                ];
+            }
 
-            //Create order
+            Order::insert($order_list);            
 
-            // foreach ($products as $product) {
-            //     $product->account_id = $account->id;
-
-            //     $product->save();
-            // }
-
+            $this->_assign_product_list_to_account($account, 7);
 
             if ($account->referer_sponsor_code) {
                 $account_sponsor = AccountSponsor::where('account_id', 
@@ -307,5 +298,90 @@ class AccountController extends Controller
         ];
 
         return response()->json($data);
+    }
+
+    private function _get_unique_ebook_product_list() {
+        $ebook_category = Category::where('slug', 'like', '%ebook%')
+        ->orWhere('slug', 'like', '%e-book%')->firstOrFail();
+
+        $product_list = collect(Category::where('category_id', $ebook_category->id)->get())
+        ->map(function($sub_category) {
+                return $this->_get_random_product_by_category_id($sub_category->id);
+            }
+        );
+
+        return $product_list;
+    }
+
+    private function _assign_product_list_to_account( 
+        Account $account, 
+        int $product_max_num) {
+            $ebook_id_list = Ebook::all()->pluck('id')->toArray();
+
+            for ($i=0; $i < $product_max_num; $i++) { 
+                $random_index = rand(0, count($ebook_id_list) - 1); 
+                $random_ebook_id = $ebook_id_list[$random_index];
+
+                $ebook = Ebook::findOrFail($random_ebook_id);
+
+                $product = new Product;
+
+                $product->name = $ebook->name ?? null;
+                $product->slug = Str::slug($ebook->slug) . Str::random(6);
+                $product->description = $ebook->description ?? null;
+                $product->price = $ebook->price ?? null;
+                $product->download_code = $ebook->download_code;
+                $product->initial_stock = $ebook->initial_stock ?? null;
+                $product->current_stock = $ebook->initial_stock ?? null;
+                $product->img_url = $ebook->img_url ?? null;
+                $product->file_url = $ebook->file_url ?? null;
+                $product->account_id = $account->id ?? null;
+                $product->category_id = $ebook->category_id ?? null;
+                $product->is_public = $ebook->is_public ?? false;
+
+                $product->save();
+
+                array_splice($ebook_id_list, $random_index, 1);
+            }
+    }
+
+    private function _assign_product_list_to_account_v0( 
+        Account $account, 
+        int $product_max_num) {
+            $product_id_list = Product::where(function($query) {
+                return $query->orWhereNull('account_id')
+                ->orWhereNotNull('deleted_at')
+                ->withTrashed();
+            })->get()->pluck('id')->toArray();
+
+            if (count($product_id_list) < $product_max_num)
+                throw new \Exception("Le stock de ebooks est épuisé");
+
+            for ($i=0; $i < $product_max_num; $i++) { 
+                $random_index = rand(0, count($product_id_list) - 1); 
+                $random_product_id = $product_id_list[$random_index];
+
+                array_splice($product_id_list, $random_index, 1);
+
+                $product = Product::findOrFail($random_product_id);
+
+                $product->account_id = $account->id;
+
+                $product->save();
+                $product->restore();
+            }
+    }
+
+    private function _get_random_product_by_category_id(int $category_id): Product {
+        $product_id_list = Product::where('category_id', $category_id)
+        ->withTrashed()->pluck('id')->toArray();
+        
+        $random_product_id = $product_id_list[rand(0, count($product_id_list) -1 )];
+
+        $product = Product::where('id', $random_product_id)->firstOrFail();
+
+        $product->restore();
+
+        return $product;
     }
 }

@@ -3,11 +3,13 @@ namespace App\Http\Controllers;
 
 use App\Http\Auth;
 use App\Models\Product;
+use App\Models\Ebook;
 use Illuminate\Http\Request;
 use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\UpdateProductRequest;
 use App\Utils;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\DB;
 
 
 class ProductController extends Controller
@@ -70,22 +72,52 @@ class ProductController extends Controller
     {
         $validated = $request->validated();
 
-        $product = new Product;
+        DB::beginTransaction();
 
-        $product->name = $validated['name'] ?? null;
-		$product->slug = Str::slug($validated['name']) . Str::random(6);
-		$product->description = $validated['description'] ?? null;
-		$product->price = $validated['price'] ?? null;
-		$product->download_code = "CP" . Utils::generateRandAlnum();
-		$product->initial_stock = $validated['initial_stock'] ?? null;
-		$product->current_stock = $validated['current_stock'] ?? null;
-		$product->img_url = $validated['img_url'] ?? null;
-		$product->file_url = $validated['file_url'] ?? null;
-		$product->account_id = $validated['account_id'] ?? null;
-		$product->category_id = $validated['category_id'] ?? null;
-        $product->is_public = $validated['is_public'] ?? false;
+        try {
+            $product = new Product;
 
-        $product->save();
+            $product->name = $validated['name'] ?? null;
+            $product->slug = Str::slug($validated['name']) . Str::random(6);
+            $product->description = $validated['description'] ?? null;
+            $product->price = $validated['price'] ?? null;
+            $product->download_code = "CP" . Utils::generateRandAlnum();
+            $product->initial_stock = $validated['initial_stock'] ?? null;
+            $product->current_stock = $validated['current_stock'] ?? null;
+            $product->img_url = $validated['img_url'] ?? null;
+            $product->file_url = $validated['file_url'] ?? null;
+            $product->account_id = $validated['account_id'] ?? null;
+            $product->category_id = $validated['category_id'] ?? null;
+            $product->is_public = $validated['is_public'] ?? false;
+
+            $product->save();
+
+            if ($product->category->category->slug == 'ebook' || 
+                $product->category->category->slug == 'ebooks' ||
+                $product->category->category->slug == 'e-book' ||
+                $product->category->category->slug == 'e-books') {
+
+                $ebook = new Ebook;
+
+                $ebook->name = $product->name ?? null;
+                $ebook->slug = Str::slug($validated['name']) . Str::random(6);
+                $ebook->description = $product->description ?? null;
+                $ebook->price = $product->price ?? null;
+                $ebook->download_code = "CP" . Utils::generateRandAlnum();
+                $ebook->initial_stock = $product->initial_stock ?? null;
+                $ebook->img_url = $product->img_url ?? null;
+                $ebook->file_url = $product->file_url ?? null;
+                $ebook->category_id = $product->category_id ?? null;
+                $ebook->is_public = $product->is_public ?? false;
+                
+                $ebook->save();
+            }
+
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollback();
+            throw new \Exception($e->getMessage(), 1);
+        }
 
         $data = [
             'success'       => true,

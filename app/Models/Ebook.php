@@ -9,5 +9,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Ebook extends Model
 {
     use HasFactory, SoftDeletes;
+
+    public function category() {
+        return $this->belongsTo(Category::class);
+    }
             
 }

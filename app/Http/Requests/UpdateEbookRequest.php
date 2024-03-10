@@ -25,14 +25,15 @@ class UpdateEbookRequest extends FormRequest
     {
         return [
             'name' => 'nullable|string',
-			'slug' => 'nullable|string|unique:ebooks',
-			'type' => 'nullable|string',
-			'download_code' => 'nullable|string',
-			'description' => 'nullable|string',
-			'price' => 'nullable|integer',
-			'initial_stock' => 'nullable|integer',
-			'img_url' => 'nullable|string',
-			'file_url' => 'nullable|string',
+            'slug' => 'nullable|string',
+            'description' => 'nullable|string',
+            'price' => 'nullable|integer',
+            'download_code' => 'nullable|string',
+            'initial_stock' => 'nullable|integer',
+            'img_url' => 'nullable|string',
+            'file_url' => 'nullable|string',
+            'is_public' => 'nullable|boolean',
+            'category_id' => 'nullable|integer|exists:categories,id',
 
         ];
     }

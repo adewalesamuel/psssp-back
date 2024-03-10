@@ -17,13 +17,16 @@ class CreateEbooksTable extends Migration
             $table->id();
 			$table->string('name');
 			$table->string('slug')->unique();
-			$table->enum('type', ['private', 'public']);
+            $table->text('description')->nullable()->default('');
+            $table->integer('price');
 			$table->string('download_code')->nullable()->default('');
-			$table->text('description')->nullable()->default('');
-			$table->integer('price');
 			$table->integer('initial_stock')->default(0);
 			$table->string('img_url')->nullable()->default('');
 			$table->string('file_url')->nullable()->default('');
+            $table->boolean('is_public')->default(false);
+            $table->foreignId('category_id')
+            ->constrained()
+            ->onDelete('cascade');
 			$table->softDeletes();
 			$table->timestamps();
         });

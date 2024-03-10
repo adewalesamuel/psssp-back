@@ -54,7 +54,7 @@ class ApiUserAuthController extends Controller
                 $user->sponsor_code = "CP" . Utils::generateRandAlnum();
 
                 $user->save();
-            }
+            }            
 
             $token =  Str::random(60);
 
