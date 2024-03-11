@@ -40,6 +40,7 @@ Route::post('register', [ApiUserAuthController::class, 'register']);
 Route::middleware(['auth.api_token:user'])->group(function () {
     Route::post('logout', [ApiUserAuthController::class, 'logout']);
     Route::post('validate', [AccountController::class, 'account_validate']);
+    Route::get('sponsor', [AccountController::class, 'sponsor']);
 
     Route::get('analytics', [AccountController::class, 'account_analytics']);
 

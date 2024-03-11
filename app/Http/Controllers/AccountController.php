@@ -13,6 +13,7 @@ use App\Models\Order;
 use App\Models\Product;
 use App\Models\Ebook;
 use App\Models\Category;
+use App\Models\User;
 use App\Models\AccountSponsor;
 use Illuminate\Support\Str;
 use App\Utils;
@@ -125,6 +126,31 @@ class AccountController extends Controller
         $data = [
             'success' => true,
             'account' => $account
+        ];
+
+        return response()->json($data);
+    }
+
+    public function sponsor(Request $request) {
+        $user_account = Auth::getUser($request, Auth::ACCOUNT);
+        $referer_sponsor_code = $user_account->referer_sponsor_code;
+        $account = null;
+
+        if (!$referer_sponsor_code) {
+            $account_id_list = Account::where('id', '!=', $user_account->id)
+            ->pluck('id')->toArray();
+            
+            $account = Account::findOrFail(
+                $account_id_list[rand(0, count($account_id_list) - 1)]);
+        } else {
+            $user = User::where('sponsor_code', $referer_sponsor_code)->firstOrFail();
+            $account = Account::where('user_id', $user->id)->latest()->firstOrFail();
+            $account['user'] = $user;
+        }
+
+        $data = [
+            'success' => true,
+            'sponsor' => $account
         ];
 
         return response()->json($data);

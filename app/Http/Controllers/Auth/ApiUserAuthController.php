@@ -30,10 +30,11 @@ class ApiUserAuthController extends Controller
 
         $account = Account::where('email', $credentials['email'])->first();
 
+        $account->user;
+
         $data = [
             "success" => true,
             "account" => $account,
-            "user" => User::find($account->user_id),
             "tk" => $account->api_token
         ];
 
@@ -86,11 +87,11 @@ class ApiUserAuthController extends Controller
             throw new \Exception($e->getMessage());
         }
 
+        $account['user'] = $user;
         
         $data = [
             'success'  => true,
             'account'   => $account,
-            'user' => $user,
             'tk' => $token
         ];
 
@@ -118,7 +119,7 @@ class ApiUserAuthController extends Controller
 
         if (isset($referer_sponsor_code)) {
             $sponsor = User::where('sponsor_code', 
-                $referer_sponsor_code)->first();
+                $referer_sponsor_code)->firstOrFail();
 
             $sponsor->increment('num_code_use');
             $sponsor->save();
@@ -129,7 +130,7 @@ class ApiUserAuthController extends Controller
             });
 
             $random_sponsor_id = $sponsor_id_list[rand(0, count($sponsor_id_list) - 1)];
-            $sponsor = User::find($random_sponsor_id);
+            $sponsor = User::findOrFail($random_sponsor_id);
         }
 
         if (!$sponsor)
