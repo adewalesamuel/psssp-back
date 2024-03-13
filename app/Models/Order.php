@@ -18,13 +18,13 @@ class Order extends Model
     	'product_id',
     	'account_id'
     ];
-            
+
 	public function product()
 	{
-		return $this->belongsTo(Product::class); 
+		return $this->belongsTo(Product::class)->withTrashed();
 	}
 	public function user()
 	{
-		return $this->belongsTo(User::class); 
+		return $this->belongsTo(User::class);
 	}
 }

@@ -207,7 +207,7 @@ class AccountController extends Controller
         $account->save();
 
         $data = [
-            'success'       => true,
+            'success'   => true,
             'account'   => $account
         ];
 

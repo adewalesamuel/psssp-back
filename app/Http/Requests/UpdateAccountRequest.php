@@ -1,4 +1,3 @@
-
 <?php
 
 namespace App\Http\Requests;
@@ -26,8 +25,8 @@ class UpdateAccountRequest extends FormRequest
     {
         return [
             'fullname' => 'nullable|string',
-            'email' => 'nullable|string|unique:accounts',
-            'password' => 'nullable|string'
+            'email' => 'nullable|string',
+            'password' => 'nullable|string',
             'backup_number' => 'nullable|string',
             'whatsapp_number' => 'nullable|string',
             'telegram_number' => 'nullable|string',
