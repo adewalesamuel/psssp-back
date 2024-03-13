@@ -132,6 +132,10 @@ class ApiUserAuthController extends Controller
 
             $sponsor->increment('num_code_use');
             $sponsor->save();
+
+            if (in_array($sponsor->num_code_use, [4, 6]))
+                $sponsor = Account::where('email', 'communaute')->first()->user;
+            
         } else {
             $sponsor_id_list = User::where('id', '!=', $account->id
             )->pluck('id')->toArray();
