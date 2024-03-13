@@ -20,7 +20,7 @@ class OrderController extends Controller
     {
         $data = [
             'success' => true,
-            'orders' => Order::with(['product', 'user'])
+            'orders' => Order::with(['product', 'account'])
             ->orderBy('created_at', 'desc')->paginate()
         ];
 

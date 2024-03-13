@@ -23,8 +23,8 @@ class Order extends Model
 	{
 		return $this->belongsTo(Product::class)->withTrashed();
 	}
-	public function user()
+	public function account()
 	{
-		return $this->belongsTo(User::class);
+		return $this->belongsTo(Account::class);
 	}
 }
