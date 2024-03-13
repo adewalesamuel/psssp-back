@@ -38,7 +38,7 @@ class AccountController extends Controller
 
         $data = [
             'success' => true,
-            'notifcations' => $account->notifications
+            'notifications' => $account->notifications
 
         ];
 
