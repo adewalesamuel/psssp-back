@@ -25,7 +25,7 @@ class UpdateCategoryRequest extends FormRequest
     {
         return [
             'name' => 'nullable|string',
-			'slug' => 'nullable|string|unique:categories',
+			'slug' => 'nullable|string',
 			'description' => 'nullable|string',
 			'img_url' => 'nullable|string',
 			'category_id' => 'nullable|integer|exists:categories,id',

@@ -25,8 +25,8 @@ class UpdateAdminRequest extends FormRequest
     {
         return [
             'fullname' => 'nullable|string',
-			'email' => 'nullable|string|unique:admins',
-			'password' => 'nullable|string|unique:admins',
+			'email' => 'nullable|string',
+			'password' => 'nullable|string',
 			'profile_img_url' => 'nullable|string',
 			'role_id' => 'nullable|integer|exists:roles,id',
 

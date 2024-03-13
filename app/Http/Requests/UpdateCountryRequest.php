@@ -25,8 +25,8 @@ class UpdateCountryRequest extends FormRequest
     {
         return [
             'name' => 'nullable|string',
-			'code' => 'nullable|string|unique:countries',
-			'phone_code' => 'nullable|string|unique:countries',
+			'code' => 'nullable|string',
+			'phone_code' => 'nullable|string',
 			'flag_icon_url' => 'nullable|string',
 
         ];
