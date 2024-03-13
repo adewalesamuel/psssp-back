@@ -37,7 +37,7 @@ class OrderController extends Controller
 
         $data = [
             'success' => true,
-            'orders' => $orders->orderBy('created_at', 'desc')->paginate()
+            'orders' => $orders->orderBy('created_at', 'desc')->get()
         ];
 
         return response()->json($data, 200);

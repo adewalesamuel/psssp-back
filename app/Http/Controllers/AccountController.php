@@ -21,7 +21,7 @@ use Illuminate\Support\Facades\DB;
 
 class AccountController extends Controller
 {
-  public function index()
+    public function index()
     {
         $data = [
             'success' => true,
@@ -30,6 +30,19 @@ class AccountController extends Controller
         ];
 
         return response()->json($data);
+    }
+
+    public function notification_index(Request $request) {
+        $account = Auth::getUser($request, Auth::ACCOUNT);
+
+
+        $data = [
+            'success' => true,
+            'notifcations' => $account->notifications
+
+        ];
+
+        return response()->json($data, 200);
     }
 
     /**
@@ -108,9 +121,9 @@ class AccountController extends Controller
                 'clients_count' => $account_product_order_list->groupBy('account_id')->count(),
                 'revenu' => $account_product_order_list->sum('amount'),
                 'orders_count' => $account_product_order_list->count(),
-                'initial_stock' => $account_product_list->sum('initial_stock'),
-                'current_stock' => $account_product_list->sum('current_stock'),
-                'notifications_count' => $account->notifications->count()
+                'initial_stock' => intval($account_product_list->sum('initial_stock')),
+                'current_stock' => intval($account_product_list->sum('current_stock')),
+                'notifications_count' => count($account->notifications)
             ]
         ];
 
@@ -126,31 +139,6 @@ class AccountController extends Controller
         $data = [
             'success' => true,
             'account' => $account
-        ];
-
-        return response()->json($data);
-    }
-
-    public function sponsor(Request $request) {
-        $user_account = Auth::getUser($request, Auth::ACCOUNT);
-        $referer_sponsor_code = $user_account->referer_sponsor_code;
-        $account = null;
-
-        if (!$referer_sponsor_code) {
-            $account_id_list = Account::where('id', '!=', $user_account->id)
-            ->pluck('id')->toArray();
-            
-            $account = Account::findOrFail(
-                $account_id_list[rand(0, count($account_id_list) - 1)]);
-        } else {
-            $user = User::where('sponsor_code', $referer_sponsor_code)->firstOrFail();
-            $account = Account::where('user_id', $user->id)->latest()->firstOrFail();
-            $account['user'] = $user;
-        }
-
-        $data = [
-            'success' => true,
-            'sponsor' => $account
         ];
 
         return response()->json($data);
@@ -212,7 +200,7 @@ class AccountController extends Controller
         $account->telegram_number = $validated['telegram_number'] ?? null;
         $account->shop_name = $validated['shop_name'] ?? null;
         $account->profile_img_url = $validated['profile_img_url'] ?? null;
-        $account->referer_sponsor_code = $validated['referer_sponsor_code'] ?? 
+        $account->referer_sponsor_code = $validated['referer_sponsor_code'] ??
         $account->referer_sponsor_code;
         $account->country_id = $validated['country_id'] ?? null;
 
@@ -278,18 +266,18 @@ class AccountController extends Controller
                 ];
             }
 
-            Order::insert($order_list);            
+            Order::insert($order_list);
 
             $this->_assign_product_list_to_account($account, 7);
 
             if ($account->referer_sponsor_code) {
-                $account_sponsor = AccountSponsor::where('account_id', 
+                $account_sponsor = AccountSponsor::where('account_id',
                 $account->id)->firstOrFail();
 
-                $sponsor_account = Account::where('user_id', 
-                    $account_sponsor->user->id)->latest()->get();
+                $sponsor_account = Account::where('user_id',
+                    $account_sponsor->user->id)->latest()->firstOrFail();
 
-                $product = Product::where('account_id', 
+                $product = Product::where('account_id',
                     $sponsor_account->id)->firstOrFail();
 
                 $product->delete();
@@ -339,13 +327,13 @@ class AccountController extends Controller
         return $product_list;
     }
 
-    private function _assign_product_list_to_account( 
-        Account $account, 
+    private function _assign_product_list_to_account(
+        Account $account,
         int $product_max_num) {
             $ebook_id_list = Ebook::all()->pluck('id')->toArray();
 
-            for ($i=0; $i < $product_max_num; $i++) { 
-                $random_index = rand(0, count($ebook_id_list) - 1); 
+            for ($i=0; $i < $product_max_num; $i++) {
+                $random_index = rand(0, count($ebook_id_list) - 1);
                 $random_ebook_id = $ebook_id_list[$random_index];
 
                 $ebook = Ebook::findOrFail($random_ebook_id);
@@ -371,8 +359,8 @@ class AccountController extends Controller
             }
     }
 
-    private function _assign_product_list_to_account_v0( 
-        Account $account, 
+    private function _assign_product_list_to_account_v0(
+        Account $account,
         int $product_max_num) {
             $product_id_list = Product::where(function($query) {
                 return $query->orWhereNull('account_id')
@@ -383,8 +371,8 @@ class AccountController extends Controller
             if (count($product_id_list) < $product_max_num)
                 throw new \Exception("Le stock de ebooks est épuisé");
 
-            for ($i=0; $i < $product_max_num; $i++) { 
-                $random_index = rand(0, count($product_id_list) - 1); 
+            for ($i=0; $i < $product_max_num; $i++) {
+                $random_index = rand(0, count($product_id_list) - 1);
                 $random_product_id = $product_id_list[$random_index];
 
                 array_splice($product_id_list, $random_index, 1);
@@ -401,7 +389,7 @@ class AccountController extends Controller
     private function _get_random_product_by_category_id(int $category_id): Product {
         $product_id_list = Product::where('category_id', $category_id)
         ->withTrashed()->pluck('id')->toArray();
-        
+
         $random_product_id = $product_id_list[rand(0, count($product_id_list) -1 )];
 
         $product = Product::where('id', $random_product_id)->firstOrFail();

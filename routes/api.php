@@ -62,6 +62,7 @@ Route::middleware(['auth.api_token:user'])->group(function () {
     Route::post('upload', [FileUploadController::class, 'store']);
 
     Route::get('accounts/{account_id}/sponsor', [AccountSponsorController::class, 'account_sponsor_show']);
+    Route::get('notifications', [AccountController::class, 'notification_index']);
 });
 
 Route::prefix('admin')->group(function() {

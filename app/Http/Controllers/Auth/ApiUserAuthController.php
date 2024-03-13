@@ -11,6 +11,8 @@ use App\Models\Product;
 use App\Models\AccountSponsor;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreAccountRequest;
+use App\Jobs\NotificationJob;
+use App\Notifications\AccountSponsorNotification;
 use App\Utils;
 use Illuminate\Support\Facades\DB;
 
@@ -55,7 +57,7 @@ class ApiUserAuthController extends Controller
                 $user->sponsor_code = "CP" . Utils::generateRandAlnum();
 
                 $user->save();
-            }            
+            }
 
             $token =  Str::random(60);
 
@@ -78,8 +80,15 @@ class ApiUserAuthController extends Controller
 
             $account->save();
 
-            $sponsor = $this->_assign_sponsor_to_account($account, 
-                $validated['referer_sponsor_code']);
+            $sponsor = $this->_assign_sponsor_to_account(
+                $account, $validated['referer_sponsor_code']);
+
+            $sponsor_account = Account::where('user_id', $sponsor->id)
+            ->latest()->firstOrFail();
+
+            NotificationJob::dispatchAfterResponse(
+                $sponsor_account,
+                new AccountSponsorNotification($account));
 
             DB::commit();
         } catch(\Exception $e) {
@@ -88,7 +97,7 @@ class ApiUserAuthController extends Controller
         }
 
         $account['user'] = $user;
-        
+
         $data = [
             'success'  => true,
             'account'   => $account,
@@ -114,28 +123,23 @@ class ApiUserAuthController extends Controller
     }
 
     private function _assign_sponsor_to_account(
-        Account $account, 
+        Account $account,
         $referer_sponsor_code): User {
 
         if (isset($referer_sponsor_code)) {
-            $sponsor = User::where('sponsor_code', 
+            $sponsor = User::where('sponsor_code',
                 $referer_sponsor_code)->firstOrFail();
 
             $sponsor->increment('num_code_use');
             $sponsor->save();
         } else {
-            $sponsor_id_list = collect(User::where('id', '!=', $account->id)->get())
-            ->map(function($sponsor) {
-                return $sponsor->id;
-            });
+            $sponsor_id_list = User::where('id', '!=', $account->id
+            )->pluck('id')->toArray();
 
             $random_sponsor_id = $sponsor_id_list[rand(0, count($sponsor_id_list) - 1)];
             $sponsor = User::findOrFail($random_sponsor_id);
         }
 
-        if (!$sponsor)
-            throw new \Exception("no sponsor found", 1);
-            
         $account_sponsor = new AccountSponsor;
 
         $account_sponsor->user_id = $sponsor->id;

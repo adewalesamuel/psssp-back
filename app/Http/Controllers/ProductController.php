@@ -24,7 +24,7 @@ class ProductController extends Controller
         $products = Product::where('id', '>', -1)
         ->orderBy('created_at', 'desc');
 
-        if ($request->input('page') == null || 
+        if ($request->input('page') == null ||
             $request->input('page') == '') {
             $products = $products->get();
         } else {
@@ -46,7 +46,7 @@ class ProductController extends Controller
         $data = [
             'success' => true,
             'products' => Product::where('account_id', $account->id)
-            ->with(['category'])->orderBy('created_at', 'desc')->paginate()
+            ->with(['category'])->orderBy('created_at', 'desc')->get()
         ];
 
         return response()->json($data);
@@ -92,7 +92,7 @@ class ProductController extends Controller
 
             $product->save();
 
-            if ($product->category->category->slug == 'ebook' || 
+            if ($product->category->category->slug == 'ebook' ||
                 $product->category->category->slug == 'ebooks' ||
                 $product->category->category->slug == 'e-book' ||
                 $product->category->category->slug == 'e-books') {
@@ -109,7 +109,7 @@ class ProductController extends Controller
                 $ebook->file_url = $product->file_url ?? null;
                 $ebook->category_id = $product->category_id ?? null;
                 $ebook->is_public = $product->is_public ?? false;
-                
+
                 $ebook->save();
             }
 

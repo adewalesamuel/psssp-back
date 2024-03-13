@@ -57,15 +57,15 @@ class AccountSponsorController extends Controller
     }
 
     public function account_sponsor_show(Request $request, int $account_id) {
-            $account_sponsor = AccountSponsor::where(
-                'account_id', $account_id)->firstOrFail();
-            $sponsor = Account::where('user_id', $account_sponsor->user_id)
-            ->with(['user'])->latest()->get();
+        $account_sponsor = AccountSponsor::where(
+            'account_id', $account_id)->firstOrFail();
+        $sponsor = Account::where('user_id', $account_sponsor->user_id)
+        ->with(['user'])->latest()->get();
 
-            $data = [
-                'success' => true,
-                'sponsor' => $sponsor,
-            ];
+        $data = [
+            'success' => true,
+            'sponsor' => $sponsor,
+        ];
 
         return response()->json($data);
     }
