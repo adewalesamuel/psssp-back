@@ -17,6 +17,7 @@ use App\Models\User;
 use App\Models\AccountSponsor;
 use Illuminate\Support\Str;
 use App\Utils;
+use Exception;
 use Illuminate\Support\Facades\DB;
 
 class AccountController extends Controller
@@ -270,7 +271,7 @@ class AccountController extends Controller
 
             $this->_assign_product_list_to_account($account, 7);
 
-            if ($account->referer_sponsor_code) {
+            if (isset($account->referer_sponsor_code)) {
                 $account_sponsor = AccountSponsor::where('account_id',
                 $account->id)->firstOrFail();
 
