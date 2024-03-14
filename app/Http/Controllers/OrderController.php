@@ -31,7 +31,7 @@ class OrderController extends Controller
         $account =  Auth::getUser($request, Auth::ACCOUNT);
         $status = $request->input('status');
         $orders = Order::where('account_id', $account->id)
-        ->with(['product', 'product.category']);
+        ->with(['product', 'product.category', 'product.category.category']);
 
         if ($status) $orders = $orders->where('status', $status);
 

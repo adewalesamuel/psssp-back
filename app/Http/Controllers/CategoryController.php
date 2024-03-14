@@ -18,13 +18,13 @@ class CategoryController extends Controller
     public function index(Request $request)
     {
         $categories = Category::where('id', '>', -1)
-        ->orderBy('created_at', 'desc');
+        ->with(['category'])->orderBy('created_at', 'desc');
 
-        if ($request->input('page') == null || 
+        if ($request->input('page') == null ||
             $request->input('page') == '') {
             $categories = $categories->get();
         } else {
-            $categories = $categories->with(['category'])->paginate();
+            $categories = $categories->paginate();
         }
 
         $data = [

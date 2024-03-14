@@ -46,7 +46,7 @@ class ProductController extends Controller
         $data = [
             'success' => true,
             'products' => Product::where('account_id', $account->id)
-            ->with(['category'])->orderBy('created_at', 'desc')->get()
+            ->with(['category', 'category.category'])->orderBy('created_at', 'desc')->get()
         ];
 
         return response()->json($data);
