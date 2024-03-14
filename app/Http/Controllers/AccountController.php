@@ -277,10 +277,13 @@ class AccountController extends Controller
                 $sponsor_account = Account::where('user_id',
                     $account_sponsor->user->id)->latest()->firstOrFail();
 
-                $product = Product::where('account_id',
-                    $sponsor_account->id)->firstOrFail();
+                if (!Str::contains(Str::lower($sponsor_account->email), 'communaute')) {
+                    $product = Product::where('account_id',
+                        $sponsor_account->id)->firstOrFail();
 
-                $product->delete();
+                    $product->delete();
+                }
+
             }
 
             DB::commit();
