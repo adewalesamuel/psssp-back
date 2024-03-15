@@ -126,7 +126,8 @@ class ApiUserAuthController extends Controller
         Account $account,
         $referer_sponsor_code): User {
 
-        if (isset($referer_sponsor_code)) {
+        if (isset($referer_sponsor_code) && 
+            User::where('sponsor_code', $referer_sponsor_code)->exists()) {
             $sponsor = User::where('sponsor_code',
                 $referer_sponsor_code)->firstOrFail();
 
