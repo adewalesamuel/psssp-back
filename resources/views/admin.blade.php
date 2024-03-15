@@ -5,10 +5,11 @@
     <link rel="icon" type="image/svg+xml" href="/admin/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>PSSSP Admin</title>
-    <script type="module" crossorigin src="/admin/assets/index-Dd43SFib.js"></script>
-    <link rel="stylesheet" crossorigin href="/admin/assets/index-CTf7qMBi.css">
+    <script type="module" crossorigin src="/admin/assets/index-9ef0f0bf.js"></script>
+    <link rel="stylesheet" href="/admin/assets/index-df2b4b1a.css">
   </head>
   <body>
     <div id="root"></div>
+    
   </body>
 </html>
