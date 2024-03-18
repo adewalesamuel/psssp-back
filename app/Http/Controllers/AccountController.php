@@ -271,14 +271,15 @@ class AccountController extends Controller
 
             $this->_assign_product_list_to_account($account, 7);
 
-            if (isset($account->referer_sponsor_code)) {
+            if (isset($account->referer_sponsor_code) && 
+                User::where('sponsor_code', $account->referer_sponsor_code)->exists()) {
                 $account_sponsor = AccountSponsor::where('account_id',
                 $account->id)->firstOrFail();
 
                 $sponsor_account = Account::where('user_id',
                     $account_sponsor->user->id)->latest()->firstOrFail();
 
-                if (!Str::contains(Str::lower($sponsor_account->email), 'communaute')) {
+                if (!Str::contains(Str::lower($sponsor_account->email), 'solidarite')) {
                     $product = Product::where('account_id',
                         $sponsor_account->id)->firstOrFail();
 
@@ -363,33 +364,6 @@ class AccountController extends Controller
             }
     }
 
-    private function _assign_product_list_to_account_v0(
-        Account $account,
-        int $product_max_num) {
-            $product_id_list = Product::where(function($query) {
-                return $query->orWhereNull('account_id')
-                ->orWhereNotNull('deleted_at')
-                ->withTrashed();
-            })->get()->pluck('id')->toArray();
-
-            if (count($product_id_list) < $product_max_num)
-                throw new \Exception("Le stock de ebooks est épuisé");
-
-            for ($i=0; $i < $product_max_num; $i++) {
-                $random_index = rand(0, count($product_id_list) - 1);
-                $random_product_id = $product_id_list[$random_index];
-
-                array_splice($product_id_list, $random_index, 1);
-
-                $product = Product::findOrFail($random_product_id);
-
-                $product->account_id = $account->id;
-
-                $product->save();
-                $product->restore();
-            }
-    }
-
     private function _get_random_product_by_category_id(int $category_id): Product {
         $product_id_list = Product::where('category_id', $category_id)
         ->withTrashed()->pluck('id')->toArray();
@@ -397,8 +371,6 @@ class AccountController extends Controller
         $random_product_id = $product_id_list[rand(0, count($product_id_list) -1 )];
 
         $product = Product::where('id', $random_product_id)->firstOrFail();
-
-        $product->restore();
 
         return $product;
     }
