@@ -12,14 +12,16 @@ class AccountSponsorNotification extends Notification
 {
     use Queueable;
 
+    public Account $account;
+
     /**
      * Create a new notification instance.
      *
      * @return void
      */
-    public function __construct(public Account $account)
+    public function __construct($account)
     {
-        //
+        $this->account = $account;
     }
 
     /**

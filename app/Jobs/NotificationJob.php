@@ -15,16 +15,18 @@ class NotificationJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
+    public Account $notifiable;
+    public Notification $notification_instance;
+
     /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct(
-        public Account $notifiable,
-        public Notification $notification_instance)
+    public function __construct($notifiable, $notification_instance)
     {
-        //
+        $this->notifiable = $notifiable;
+        $this->notification_instance = $notification_instance;
     }
 
     /**
