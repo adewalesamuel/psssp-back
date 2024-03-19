@@ -15,6 +15,7 @@ use App\Jobs\NotificationJob;
 use App\Notifications\AccountSponsorNotification;
 use App\Utils;
 use Illuminate\Support\Facades\DB;
+use App\Psssp;
 
 class ApiUserAuthController extends Controller
 {
@@ -135,14 +136,10 @@ class ApiUserAuthController extends Controller
             $sponsor->save();
 
             if (in_array($sponsor->num_code_use, [4, 6]))
-                $sponsor = Account::where('email', 'communaute')->first()->user;
+                $sponsor = Psssp::getSolidariteUser();
             
         } else {
-            $sponsor_id_list = User::where('id', '!=', $account->id
-            )->pluck('id')->toArray();
-
-            $random_sponsor_id = $sponsor_id_list[rand(0, count($sponsor_id_list) - 1)];
-            $sponsor = User::findOrFail($random_sponsor_id);
+            $sponsor = Psssp::getSolidariteUser();
         }
 
         $account_sponsor = new AccountSponsor;

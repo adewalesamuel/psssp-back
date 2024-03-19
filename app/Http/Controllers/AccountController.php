@@ -19,6 +19,7 @@ use Illuminate\Support\Str;
 use App\Utils;
 use Exception;
 use Illuminate\Support\Facades\DB;
+use App\Psssp;
 
 class AccountController extends Controller
 {
@@ -279,7 +280,7 @@ class AccountController extends Controller
                 $sponsor_account = Account::where('user_id',
                     $account_sponsor->user->id)->latest()->firstOrFail();
 
-                if (!Str::contains(Str::lower($sponsor_account->email), 'solidarite')) {
+                if (!Str::contains(Str::lower($sponsor_account->email), Psssp::SOLIDARITE_LOGIN)) {
                     $product = Product::where('account_id',
                         $sponsor_account->id)->firstOrFail();
 
