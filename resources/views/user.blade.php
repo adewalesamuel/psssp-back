@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="fr">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/user/vite.svg" />
@@ -7,7 +7,7 @@
     <title>PSSSP</title>
     <link rel="shortcut icon" type="image/x-icon" href="../../../app-assets/images/ico/favicon.ico">  
 
-    <script type="module" crossorigin src="/user/assets/index-cd312acd.js"></script>
+    <script type="module" crossorigin src="/user/assets/index-67544cf7.js"></script>
     <link rel="stylesheet" href="/user/assets/index-d6d4568f.css">
   </head>
   <body>
