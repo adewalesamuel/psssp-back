@@ -144,6 +144,9 @@ return [
         'attribute-name' => [
             'rule-name' => 'custom-message',
         ],
+        'referer_sponsor_code' => [
+            'exists' => 'Le :attribute est erroné. Vous pouvez continuer votre inscription sans introduire de code de parrainage'
+        ]
     ],
 
     /*
@@ -156,6 +159,8 @@ return [
     |
     */
 
-    'attributes' => [],
+    'attributes' => [
+        'referer_sponsor_code' => 'code de parrainage'
+    ],
 
 ];
