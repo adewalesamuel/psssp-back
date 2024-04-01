@@ -16,6 +16,7 @@ use App\Http\Controllers\EbookController;
 use App\Http\Controllers\AccountController;
 use App\Http\Controllers\AccountSponsorController;
 use App\Http\Controllers\FileUploadController;
+use App\Http\Controllers\SubscriptionPlanController;
 
 /*
 |--------------------------------------------------------------------------
@@ -133,6 +134,12 @@ Route::prefix('admin')->group(function() {
         Route::get('ebooks/{ebook}', [EbookController::class, 'show']);
         Route::put('ebooks/{ebook}', [EbookController::class, 'update']);
         Route::delete('ebooks/{ebook}', [EbookController::class, 'destroy']);
+
+        Route::get('subscription-plans',[SubscriptionPlanController::class, 'index']);
+        Route::post('subscription-plans',[SubscriptionPlanController::class, 'store']);
+        Route::get('subscription-plans/{subscription_plan}', [SubscriptionPlanController::class, 'show']);
+        Route::put('subscription-plans/{subscription_plan}', [SubscriptionPlanController::class, 'update']);
+        Route::delete('subscription-plans/{subscription_plan}', [SubscriptionPlanController::class, 'destroy']);
     });
 
 });
