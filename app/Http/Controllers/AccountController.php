@@ -111,16 +111,22 @@ class AccountController extends Controller
     public function account_analytics(Request $request) {
         $account = Auth::getUser($request, Auth::ACCOUNT);
 
-        $account_product_id_list = Product::where('account_id', $account->id)
-        ->pluck('id')->toArray();
-        $account_product_order_list = Order::whereIn('product_id', $account_product_id_list);
-        $account_product_list = Product::whereIn('id', $account_product_id_list);
+        $account_product_id_list = Product::where('account_id', $account->id);
+
+        $account_product_id_list_with_trashed = Product::where(
+            'account_id', $account->id)->withTrashed();
+
+        $account_product_order_list = Order::whereIn('product_id',
+        $account_product_id_list_with_trashed->pluck('id')->toArray());
+
+        $account_product_list = Product::whereIn('id',
+        $account_product_id_list->pluck('id')->toArray());
 
         $data = [
             'success' => true,
             'analytics' => [
                 'accounts_count' => $account->user->accounts()->count(),
-                'products_count' => count($account_product_id_list),
+                'products_count' => $account_product_id_list->count(),
                 'clients_count' => $account_product_order_list->groupBy('account_id')->count(),
                 'revenu' => $account_product_order_list->sum('amount'),
                 'orders_count' => $account_product_order_list->count(),
