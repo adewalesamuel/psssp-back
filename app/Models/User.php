@@ -15,4 +15,8 @@ class User extends Authenticatable
     public function accounts() {
         return $this->hasMany(Account::class);
     }
+
+    public function subscription_plan() {
+        return $this->belongsTo(SubscriptionPlan::class);
+    }
 }

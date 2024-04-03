@@ -119,6 +119,7 @@ class AccountController extends Controller
         $data = [
             'success' => true,
             'analytics' => [
+                'accounts_count' => $account->user->accounts()->count(),
                 'products_count' => count($account_product_id_list),
                 'clients_count' => $account_product_order_list->groupBy('account_id')->count(),
                 'revenu' => $account_product_order_list->sum('amount'),
@@ -272,7 +273,7 @@ class AccountController extends Controller
 
             $this->_assign_product_list_to_account($account, 7);
 
-            if (isset($account->referer_sponsor_code) && 
+            if (isset($account->referer_sponsor_code) &&
                 User::where('sponsor_code', $account->referer_sponsor_code)->exists()) {
                 $account_sponsor = AccountSponsor::where('account_id',
                 $account->id)->firstOrFail();

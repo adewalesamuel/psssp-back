@@ -12,6 +12,7 @@ use App\Models\AccountSponsor;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreAccountRequest;
 use App\Jobs\NotificationJob;
+use App\Models\SubscriptionPlan;
 use App\Notifications\AccountSponsorNotification;
 use App\Utils;
 use Illuminate\Support\Facades\DB;
@@ -25,20 +26,19 @@ class ApiUserAuthController extends Controller
         if (!Auth::guard()->once($credentials)) {
             $data = [
                 'error' => true,
-                'message' => "Mail ou mot de passe incorrect"
+                'message' => "Login ou mot de passe incorrect"
             ];
 
             return response()->json($data, 404);
         }
 
-        $account = Account::where('email', $credentials['email'])->first();
-
-        $account->user;
+        $account = Account::where('email', $credentials['email'])
+        ->with(['user', 'user.subscription_plan'])->first();
 
         $data = [
-            "success" => true,
-            "account" => $account,
-            "tk" => $account->api_token
+            'success' => true,
+            'account' => $account,
+            'tk' => $account->api_token
         ];
 
         return response()->json($data);
@@ -81,6 +81,14 @@ class ApiUserAuthController extends Controller
 
             $account->save();
 
+            $account_count = $user->accounts()->count();
+
+            if ($account_count < 11) {
+                $subscription_plan = SubscriptionPlan::where('slug', 'plan-super-simple')->first();
+                $user->subscription_plan_id = $subscription_plan->id;
+                $user->save();
+            }
+
             $sponsor = $this->_assign_sponsor_to_account(
                 $account, $validated['referer_sponsor_code']);
 
@@ -96,6 +104,8 @@ class ApiUserAuthController extends Controller
             DB::rollback();
             throw new \Exception($e->getMessage());
         }
+
+        $user->subscription_plan;
 
         $account['user'] = $user;
 
@@ -127,7 +137,7 @@ class ApiUserAuthController extends Controller
         Account $account,
         $referer_sponsor_code): User {
 
-        if (isset($referer_sponsor_code) && 
+        if (isset($referer_sponsor_code) &&
             User::where('sponsor_code', $referer_sponsor_code)->exists()) {
             $sponsor = User::where('sponsor_code',
                 $referer_sponsor_code)->firstOrFail();
@@ -137,7 +147,7 @@ class ApiUserAuthController extends Controller
 
             if (in_array($sponsor->num_code_use, [4, 6]))
                 $sponsor = Psssp::getSolidariteUser();
-            
+
         } else {
             $sponsor = Psssp::getSolidariteUser();
         }

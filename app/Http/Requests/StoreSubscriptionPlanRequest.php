@@ -28,7 +28,7 @@ class StoreSubscriptionPlanRequest extends FormRequest
 			'slug' => 'required|string|unique:subscription_plans',
 			'price' => 'required|integer',
 			'description' => 'required|string',
-			'num_product' => 'required|string',
+			'num_product' => 'required|integer',
 			'num_account' => 'required|integer',
 
         ];

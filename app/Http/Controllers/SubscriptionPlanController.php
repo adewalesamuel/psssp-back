@@ -58,7 +58,7 @@ class SubscriptionPlanController extends Controller
         $subscription_plan = new SubscriptionPlan;
 
         $subscription_plan->name = $validated['name'] ?? null;
-		$subscription_plan->slug = $validated['slug'] ?? null;
+		$subscription_plan->slug = Str::slug($validated['slug']);
 		$subscription_plan->price = $validated['price'] ?? null;
 		$subscription_plan->description = $validated['description'] ?? null;
 		$subscription_plan->num_product = $validated['num_product'] ?? null;
@@ -113,7 +113,6 @@ class SubscriptionPlanController extends Controller
         $validated = $request->validated();
 
         $subscription_plan->name = $validated['name'] ?? null;
-		$subscription_plan->slug = $validated['slug'] ?? null;
 		$subscription_plan->price = $validated['price'] ?? null;
 		$subscription_plan->description = $validated['description'] ?? null;
 		$subscription_plan->num_product = $validated['num_product'] ?? null;

@@ -24,12 +24,12 @@ class UpdateSubscriptionPlanRequest extends FormRequest
     public function rules()
     {
         return [
-            'name' => 'required|string',
-			'slug' => 'required|string|unique:subscription_plans',
-			'price' => 'required|integer',
-			'description' => 'required|string',
-			'num_product' => 'required|string',
-			'num_account' => 'required|integer',
+            'name' => 'nullable|string',
+			'slug' => 'nullable|string',
+			'price' => 'nullable|integer',
+			'description' => 'nullable|string',
+			'num_product' => 'nullable|integer',
+			'num_account' => 'nullable|integer',
 
         ];
     }
