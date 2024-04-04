@@ -16,8 +16,6 @@ use App\Models\Category;
 use App\Models\User;
 use App\Models\AccountSponsor;
 use Illuminate\Support\Str;
-use App\Utils;
-use Exception;
 use Illuminate\Support\Facades\DB;
 use App\Psssp;
 
@@ -277,6 +275,7 @@ class AccountController extends Controller
 
             Order::insert($order_list);
 
+            //TODO: loop through suscription plan; check if plan[num_account] <= sponsor_account_num < plan+1[num_account]
             $this->_assign_product_list_to_account($account, 7);
 
             if (isset($account->referer_sponsor_code) &&
