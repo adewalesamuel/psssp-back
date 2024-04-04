@@ -142,6 +142,8 @@ class ApiUserAuthController extends Controller
             $sponsor = User::where('sponsor_code',
                 $referer_sponsor_code)->firstOrFail();
 
+            //TODO: check if latest sponsor account has books else assing solidarite
+
             $sponsor->increment('num_code_use');
             $sponsor->save();
 
