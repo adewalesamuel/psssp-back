@@ -40,10 +40,14 @@ Route::post('register', [ApiUserAuthController::class, 'register']);
 
 Route::middleware(['auth.api_token:user'])->group(function () {
     Route::post('logout', [ApiUserAuthController::class, 'logout']);
+
     Route::post('validate', [AccountController::class, 'account_validate']);
+
     Route::get('sponsor', [AccountController::class, 'sponsor']);
 
     Route::get('analytics', [AccountController::class, 'account_analytics']);
+
+    Route::get('accounts', [AccountController::class, 'user_index']);
 
     Route::get('profile', [AccountController::class, 'account_show']);
     Route::put('profile', [AccountController::class, 'account_update']);

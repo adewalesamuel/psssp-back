@@ -32,6 +32,19 @@ class AccountController extends Controller
         return response()->json($data);
     }
 
+    public function user_index(Request $request) {
+        $account = Auth::getUser($request, Auth::ACCOUNT);
+        $data = [
+            'succes' => true,
+            'accounts' => $account->user->accounts()
+            ->orderBy('created_at', 'desc')->get()->each(function($account) {
+                $account->makeVisible(['api_token']);
+            })
+        ];
+
+        return response()->json($data, 200);
+    }
+
     public function notification_index(Request $request) {
         $account = Auth::getUser($request, Auth::ACCOUNT);
 
