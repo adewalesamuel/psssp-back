@@ -7,11 +7,10 @@
     <title>PSSSP</title>
     <link rel="shortcut icon" type="image/x-icon" href="../../../app-assets/images/ico/favicon.ico">  
 
-    <script type="module" crossorigin src="/user/assets/index-67544cf7.js"></script>
-    <link rel="stylesheet" href="/user/assets/index-d6d4568f.css">
+    <script type="module" crossorigin src="/user/assets/index-CpIOC-BG.js"></script>
+    <link rel="stylesheet" crossorigin href="/user/assets/index-BgL20N2H.css">
   </head>
   <body>
     <div id="root"></div>
-    
   </body>
 </html>

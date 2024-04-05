@@ -4,12 +4,11 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/admin/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>PSSSP Admin</title>
-    <script type="module" crossorigin src="/admin/assets/index-9ef0f0bf.js"></script>
-    <link rel="stylesheet" href="/admin/assets/index-df2b4b1a.css">
+    <title>PSSSP</title>
+    <script type="module" crossorigin src="/admin/assets/index-CXouqjay.js"></script>
+    <link rel="stylesheet" crossorigin href="/admin/assets/index-CTf7qMBi.css">
   </head>
   <body>
     <div id="root"></div>
-    
   </body>
 </html>

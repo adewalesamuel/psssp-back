@@ -1,8 +1,6 @@
 <?php
 
-use App\Http\Auth;
 use App\Models\Account;
-use App\Models\Order;
 use App\Models\User;
 use App\Psssp;
 use Illuminate\Support\Facades\Route;
@@ -41,8 +39,6 @@ Route::get('accounts/{account}/invoice', function(Request $request, Account $acc
             'buyer' => $account
         ]
     ];
-
-    return view('invoice',$data);
 
     $pdf = PDF::loadView('invoice', $data);
     return $pdf->download('facture.pdf');
