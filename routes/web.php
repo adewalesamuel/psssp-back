@@ -1,6 +1,10 @@
 <?php
 
+use App\Http\Auth;
+use App\Models\Account;
 use App\Models\Order;
+use App\Models\User;
+use App\Psssp;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 use \PDF;
@@ -16,15 +20,26 @@ use \PDF;
 |
 */
 
-Route::get('orders/{order}/invoice', function(Request $request, Order $order) {
-    $order['seller'] = $order->product->account;
-    $order['buyer'] = $order->account;
+Route::get('accounts/{account}/invoice', function(Request $request, Account $account) {
+    $sponsor = null;
 
-    unset($order['account']);
-    unset($order['product']);
+    $account->user;
 
+    if (isset($account->referer_sponsor_code)) {
+        $sponsor = User::where('sponsor_code',
+        $account->referer_sponsor_code)->firstOrFail();
+    } else {
+        $sponsor = Psssp::getSolidariteUser();
+    }
+
+    $seller = $sponsor->accounts()
+    ->orderBy('created_at', 'desc')->first();
+    $seller['user'] = $sponsor;
     $data = [
-        'order' => $order
+        'order' => [
+            'seller' => $seller,
+            'buyer' => $account
+        ]
     ];
 
     return view('invoice',$data);

@@ -56,25 +56,25 @@
                                             <div class="col-6 mt-1">
                                                 <h6 class="invoice-from">Vendeur</h6>
                                                 <div class="mb-1">
-                                                    <span>Nom complet : {{$order->seller->fullname}}</span>
+                                                    <span>Nom complet : {{$order['seller']->fullname}}</span>
                                                 </div>
                                                 <div class="mb-1">
-                                                    <span>Login : {{$order->seller->email}}</span>
+                                                    <span>Login : {{$order['seller']->email}}</span>
                                                 </div>
                                                 <div class="mb-1">
-                                                    <span>Numéro de téléphone : {{$order->seller->user->phone_number}}</span>
+                                                    <span>Numéro de téléphone : {{$order['seller']->user->phone_number}}</span>
                                                 </div>
                                             </div>
                                             <div class="col-6 mt-1">
                                                 <h6 class="invoice-to">Client</h6>
                                                 <div class="mb-1">
-                                                    <span>Nom complet : {{$order->buyer->fullname}}</span>
+                                                    <span>Nom complet : {{$order['buyer']->fullname}}</span>
                                                 </div>
                                                 <div class="mb-1">
-                                                    <span>Login : {{$order->buyer->email}}</span>
+                                                    <span>Login : {{$order['buyer']->email}}</span>
                                                 </div>
                                                 <div class="mb-1">
-                                                    <span>Numéro de téléphone : {{$order->buyer->user->phone_number}}</span>
+                                                    <span>Numéro de téléphone : {{$order['buyer']->user->phone_number}}</span>
                                                 </div>
                                             </div>
                                         </div>
