@@ -7,6 +7,7 @@ use App\Http\Requests\StoreOrderRequest;
 use App\Http\Requests\UpdateOrderRequest;
 use Illuminate\Support\Str;
 use App\Http\Auth;
+use \PDF;
 
 
 class OrderController extends Controller
@@ -119,6 +120,21 @@ class OrderController extends Controller
         ];
 
         return response()->json($data);
+    }
+
+    public function invoice(Request $request, Order $order) {
+        $order['seller'] = $order->product->account;
+        $order['buyer'] = $order->account;
+
+        unset($order['account']);
+        unset($order['product']);
+
+        $data = [
+            'order' => $order
+        ];
+
+        $pdf = PDF::loadView('invoice', $data);
+        return $pdf->download('facture.pdf');
     }
 
     /**
