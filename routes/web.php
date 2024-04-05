@@ -5,7 +5,8 @@ use App\Models\User;
 use App\Psssp;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
-use Barryvdh\DomPDF\PDF;
+use Barryvdh\DomPDF\Facade\Pdf as PDF;
+
 
 /*
 |--------------------------------------------------------------------------
