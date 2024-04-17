@@ -53,7 +53,8 @@ class AdminController extends Controller
 		$admin->password = $validated['password'] ?? null;
 		$admin->profile_img_url = $validated['profile_img_url'] ?? null;
 		$admin->role_id = $validated['role_id'] ?? null;
-		
+		$admin->api_token = Str::random(60);
+
         $admin->save();
 
         $data = [

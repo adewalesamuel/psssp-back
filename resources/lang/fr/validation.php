@@ -160,7 +160,8 @@ return [
     */
 
     'attributes' => [
-        'referer_sponsor_code' => 'code de parrainage'
+        'referer_sponsor_code' => 'code de parrainage',
+        'email' => 'login'
     ],
 
 ];
