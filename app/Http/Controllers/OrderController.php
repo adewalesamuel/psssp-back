@@ -7,6 +7,8 @@ use App\Http\Requests\StoreOrderRequest;
 use App\Http\Requests\UpdateOrderRequest;
 use Illuminate\Support\Str;
 use App\Http\Auth;
+use App\Models\Account;
+use App\Models\Product;
 use \PDF;
 
 
@@ -39,6 +41,27 @@ class OrderController extends Controller
         $data = [
             'success' => true,
             'orders' => $orders->orderBy('created_at', 'desc')->get()
+        ];
+
+        return response()->json($data, 200);
+    }
+
+    public function account_client_index(Request $request) {
+        $account =  Auth::getUser($request, Auth::ACCOUNT);
+
+        $account_product_id_list_with_trashed = Product::where(
+            'account_id', $account->id)->withTrashed();
+
+        $distinct_order_account_id_list = Order::select('account_id')->whereIn('product_id',
+        $account_product_id_list_with_trashed->pluck('id')->toArray())
+        ->distinct()->pluck('account_id')->toArray();
+
+        $clients = Account::whereIn('id', $distinct_order_account_id_list)
+        ->with(['user'])->get();
+
+        $data = [
+            'success' => true,
+            'clients' => $clients
         ];
 
         return response()->json($data, 200);

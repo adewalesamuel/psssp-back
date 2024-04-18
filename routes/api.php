@@ -65,6 +65,8 @@ Route::middleware(['auth.api_token:user'])->group(function () {
     Route::post('orders/{order}/invoice', [OrderController::class, 'invoice']);
     Route::put('orders', [OrderController::class, 'account_update']);
 
+    Route::get('clients', [OrderController::class, 'account_client_index']);
+
     Route::post('upload', [FileUploadController::class, 'store']);
 
     Route::get('accounts/{account_id}/sponsor', [AccountSponsorController::class, 'account_sponsor_show']);
