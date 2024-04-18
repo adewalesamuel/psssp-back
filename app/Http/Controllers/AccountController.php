@@ -133,12 +133,18 @@ class AccountController extends Controller
         $account_product_list = Product::whereIn('id',
         $account_product_id_list->pluck('id')->toArray());
 
+        $distinct_order_account_id_list = Order::select('account_id')->whereIn('product_id',
+        $account_product_id_list_with_trashed->pluck('id')->toArray())
+        ->distinct()->pluck('account_id')->toArray();
+
+        $clients = Account::whereIn('id', $distinct_order_account_id_list)->get();
+
         $data = [
             'success' => true,
             'analytics' => [
                 'accounts_count' => $account->user->accounts()->count(),
                 'products_count' => $account_product_id_list->count(),
-                'clients_count' => $account_product_order_list->groupBy('account_id')->count(),
+                'clients_count' => $clients->count(),
                 'revenu' => $account_product_order_list->sum('amount'),
                 'orders_count' => $account_product_order_list->count(),
                 'initial_stock' => intval($account_product_list->sum('initial_stock')),
