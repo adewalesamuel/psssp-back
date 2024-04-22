@@ -31,7 +31,7 @@
     <div class="" style="width:100%; height:3rem; background-color:purple;">
     </div>
     <!-- BEGIN: Content-->
-    <div class="">
+    <div class="" style="margin-top:1rem">
         <div class="content-wrapper">
             <div class="content-body">
                 <!-- app invoice View Page -->
