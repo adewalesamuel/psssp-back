@@ -277,7 +277,18 @@ class AccountController extends Controller
 
             $account->save();
 
-            $product_list = $this->_get_unique_ebook_product_list();
+            $sponsor = null;
+
+            if (isset($account->referer_sponsor_code) &&
+                User::where('sponsor_code', $account->referer_sponsor_code)->exists()) {
+                $account_sponsor = AccountSponsor::where('account_id',
+                $account->id)->firstOrFail();
+
+                $sponsor = Account::where('user_id',
+                    $account_sponsor->user->id)->latest()->firstOrFail();
+            }
+
+            $product_list = $this->_get_unique_ebook_product_list($account, $sponsor);
 
             $order_list = [];
 
@@ -297,21 +308,12 @@ class AccountController extends Controller
             //TODO: loop through suscription plan; check if plan[num_account] <= sponsor_account_num < plan+1[num_account]
             $this->_assign_product_list_to_account($account, 7);
 
-            if (isset($account->referer_sponsor_code) &&
-                User::where('sponsor_code', $account->referer_sponsor_code)->exists()) {
-                $account_sponsor = AccountSponsor::where('account_id',
-                $account->id)->firstOrFail();
+            if ($sponsor != null && !Str::contains(
+                Str::lower($sponsor->email), Psssp::SOLIDARITE_LOGIN)) {
+                $product = Product::where('account_id',
+                    $sponsor->id)->firstOrFail();
 
-                $sponsor_account = Account::where('user_id',
-                    $account_sponsor->user->id)->latest()->firstOrFail();
-
-                if (!Str::contains(Str::lower($sponsor_account->email), Psssp::SOLIDARITE_LOGIN)) {
-                    $product = Product::where('account_id',
-                        $sponsor_account->id)->firstOrFail();
-
-                    $product->delete();
-                }
-
+                $product->delete();
             }
 
             DB::commit();
@@ -345,13 +347,18 @@ class AccountController extends Controller
         return response()->json($data);
     }
 
-    private function _get_unique_ebook_product_list() {
+    private function _get_unique_ebook_product_list(Account $account, $sponsor) {
         $ebook_category = Category::where('slug', 'like', '%ebook%')
         ->orWhere('slug', 'like', '%e-book%')->firstOrFail();
 
-        $product_list = collect(Category::where('category_id', $ebook_category->id)->get())
-        ->map(function($sub_category) {
-                return $this->_get_random_product_by_category_id($sub_category->id);
+        $product_list = collect(Category::where('category_id', 
+            $ebook_category->id)->get())->map(
+            function($sub_category, $index) use ($account, $sponsor) {
+                if ($index == 0 && $sponsor != null)
+                    return $this->_get_sponsor_product($sponsor);
+
+                return $this->_get_random_product_by_category_id(
+                    $sub_category->id, $sponsor);
             }
         );
 
@@ -391,14 +398,23 @@ class AccountController extends Controller
     }
 
     // TODO: first book must be sponsors if not solidarite then other books must not be sponsors
-    private function _get_random_product_by_category_id(int $category_id): Product {
-        $product_id_list = Product::where('category_id', $category_id)
-        ->withTrashed()->pluck('id')->toArray();
+    private function _get_random_product_by_category_id(int $category_id, $sponsor): Product {
+        $product_id_list = Product::where(function($query) use ($sponsor) {
+            $sponsor_id = '-1';
+
+            if ($sponsor != null) $sponsor_id = $sponsor->id;
+
+            return $query->orWhere('account_id', '!=', $sponsor_id)
+            ->orWhereNull('account_id');
+        })->withTrashed()->pluck('id')->toArray();
 
         $random_product_id = $product_id_list[rand(0, count($product_id_list) -1 )];
-
-        $product = Product::where('id', $random_product_id)->firstOrFail();
+        $product = Product::withTrashed()->findOrFail($random_product_id);
 
         return $product;
+    }
+
+    private function _get_sponsor_product(Account $sponsor) {
+        return $sponsor->products()->first();
     }
 }
