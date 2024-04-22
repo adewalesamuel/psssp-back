@@ -390,6 +390,7 @@ class AccountController extends Controller
             }
     }
 
+    // TODO: first book must be sponsors if not solidarite then other books must not be sponsors
     private function _get_random_product_by_category_id(int $category_id): Product {
         $product_id_list = Product::where('category_id', $category_id)
         ->withTrashed()->pluck('id')->toArray();
