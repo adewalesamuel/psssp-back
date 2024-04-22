@@ -42,7 +42,9 @@ Route::get('accounts/{account}/invoice', function(Request $request, Account $acc
     ];
 
     $pdf = PDF::loadView('invoice', $data);
-    return $pdf->download('facture.pdf');
+    $pdf->setPaper('A4', 'landscape');
+
+    return $pdf->stream('facture.pdf');
 });
 
 Route::get('/admin/{any}', function () {

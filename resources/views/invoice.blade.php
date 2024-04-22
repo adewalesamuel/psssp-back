@@ -28,7 +28,8 @@
 <!-- BEGIN: Body-->
 
 <body class="bg-white">
-
+    <div class="" style="width:100%; height:3rem; background-color:purple;">
+    </div>
     <!-- BEGIN: Content-->
     <div class="">
         <div class="content-wrapper">
@@ -82,7 +83,7 @@
                                     </div>
                                     <!-- product details table-->
                                     <div class="invoice-product-details table-responsive mx-md-25 px-2">
-                                        Motif 4 Ebooks Téléchargebles
+                                        Motif 4 Ebooks Téléchargeables
                                         <div>Prix 40$ us</div>
                                     </div>
 
