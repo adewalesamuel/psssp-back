@@ -288,7 +288,7 @@ class AccountController extends Controller
                     $account_sponsor->user->id)->latest()->firstOrFail();
             }
 
-            $product_list = $this->_get_unique_ebook_product_list($account, $sponsor);
+            $product_list = $this->_get_unique_ebook_product_list($sponsor);
 
             $order_list = [];
 
@@ -347,18 +347,17 @@ class AccountController extends Controller
         return response()->json($data);
     }
 
-    private function _get_unique_ebook_product_list(Account $account, $sponsor) {
+    private function _get_unique_ebook_product_list($sponsor) {
         $ebook_category = Category::where('slug', 'like', '%ebook%')
         ->orWhere('slug', 'like', '%e-book%')->firstOrFail();
 
-        $product_list = collect(Category::where('category_id', 
+        $product_list = collect(Category::where('category_id',
             $ebook_category->id)->get())->map(
-            function($sub_category, $index) use ($account, $sponsor) {
+            function($sub_category, $index) use ($sponsor) {
                 if ($index == 0 && $sponsor != null)
                     return $this->_get_sponsor_product($sponsor);
 
-                return $this->_get_random_product_by_category_id(
-                    $sub_category->id, $sponsor);
+                return $this->_get_random_product_by_category_id($sub_category->id);
             }
         );
 
@@ -398,15 +397,10 @@ class AccountController extends Controller
     }
 
     // TODO: first book must be sponsors if not solidarite then other books must not be sponsors
-    private function _get_random_product_by_category_id(int $category_id, $sponsor): Product {
-        $product_id_list = Product::where(function($query) use ($sponsor) {
-            $sponsor_id = '-1';
-
-            if ($sponsor != null) $sponsor_id = $sponsor->id;
-
-            return $query->orWhere('account_id', '!=', $sponsor_id)
-            ->orWhereNull('account_id');
-        })->withTrashed()->pluck('id')->toArray();
+    private function _get_random_product_by_category_id(int $category_id): Product {
+        $product_id_list = Product::whereNull('account_id')
+        ->where('category_id', $category_id)->withTrashed()
+        ->pluck('id')->toArray();
 
         $random_product_id = $product_id_list[rand(0, count($product_id_list) -1 )];
         $product = Product::withTrashed()->findOrFail($random_product_id);
