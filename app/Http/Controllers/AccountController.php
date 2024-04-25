@@ -15,6 +15,7 @@ use App\Models\Ebook;
 use App\Models\Category;
 use App\Models\User;
 use App\Models\AccountSponsor;
+use App\Models\Country;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
 use App\Psssp;
@@ -47,11 +48,18 @@ class AccountController extends Controller
 
     public function notification_index(Request $request) {
         $account = Auth::getUser($request, Auth::ACCOUNT);
+        $notifications = $account->notifications->jsonserialize();
 
+        for ($i=0; $i < count($notifications); $i++) {
+            $account = $notifications[$i]['data']['account'];
+            $country = Country::find($account['country_id']);
+
+            $notifications[$i]['data']['account']['country'] = $country;
+        }
 
         $data = [
             'success' => true,
-            'notifications' => $account->notifications
+            'notifications' => $notifications
 
         ];
 
@@ -147,7 +155,7 @@ class AccountController extends Controller
                 'clients_count' => $clients->count(),
                 'revenu' => $account_product_order_list->sum('amount'),
                 'orders_count' => $account_product_order_list->count(),
-                'initial_stock' => intval($account_product_list->sum('initial_stock')),
+                'initial_stock' => intval($account_product_id_list_with_trashed->sum('initial_stock')),
                 'current_stock' => intval($account_product_list->sum('current_stock')),
                 'notifications_count' => count($account->notifications)
             ]
