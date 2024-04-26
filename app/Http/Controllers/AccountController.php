@@ -285,7 +285,7 @@ class AccountController extends Controller
                 $account->id)->firstOrFail();
 
                 $sponsor = Account::where('user_id',
-                    $account_sponsor->user->id)->latest()->firstOrFail();
+                    $account_sponsor->user->id)->oldest()->firstOrFail();
             }
 
             $product_list = $this->_get_unique_ebook_product_list($account, $sponsor);
@@ -415,6 +415,8 @@ class AccountController extends Controller
     }
 
     private function _get_sponsor_product(Account $sponsor) {
+        // $product = Product::where('account_id', $sponsor->id)->withTrashed()->get();
+        // throw new \Exception($sponsor,1);
         return $sponsor->products()->first();
     }
 }

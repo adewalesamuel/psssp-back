@@ -83,17 +83,16 @@ class ApiUserAuthController extends Controller
 
             $account_count = $user->accounts()->count();
 
-            if ($account_count < 11) {
-                $subscription_plan = SubscriptionPlan::where('slug', 'plan-super-simple')->first();
-                $user->subscription_plan_id = $subscription_plan->id;
-                $user->save();
-            }
+            $subscription_plan = $this->_get_plan_from_account_count($account_count);
+
+            $user->subscription_plan_id = $subscription_plan->id;
+            $user->save();
 
             $sponsor = $this->_assign_sponsor_to_account(
                 $account, $validated['referer_sponsor_code']);
 
             $sponsor_account = Account::where('user_id', $sponsor->id)
-            ->latest()->firstOrFail();
+            ->oldest()->firstOrFail();
 
             NotificationJob::dispatchAfterResponse(
                 $sponsor_account,
@@ -163,6 +162,32 @@ class ApiUserAuthController extends Controller
         $account_sponsor->save();
 
         return $sponsor;
+    }
+
+    private function _get_plan_from_account_count(int $account_count): SubscriptionPlan {
+        $subscription_plan_list = SubscriptionPlan::all();
+        $subscription_plan = null;
+
+        for ($i = 0; $i < count($subscription_plan_list); $i++) {
+            $current_subscription_plan = $subscription_plan_list[$i];
+            $next_subscription_plan = $subscription_plan_list[$i + 1] ?? null;
+
+            if (!$next_subscription_plan) {
+                $subscription_plan = $current_subscription_plan;
+
+                break;
+            }
+
+            if ($account_count >= $current_subscription_plan->num_account &&
+                $account_count < $next_subscription_plan->num_account) {
+                $subscription_plan = $current_subscription_plan;
+
+                break;
+            }
+
+        }
+
+        return $subscription_plan;
     }
 
 }
