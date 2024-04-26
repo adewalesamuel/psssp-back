@@ -60,7 +60,7 @@ class AccountSponsorController extends Controller
         $account_sponsor = AccountSponsor::where(
             'account_id', $account_id)->firstOrFail();
         $sponsor = Account::where('user_id', $account_sponsor->user_id)
-        ->with(['user', 'country'])->latest()->firstOrFail();
+        ->with(['user', 'country'])->oldest()->firstOrFail();
 
         $data = [
             'success' => true,

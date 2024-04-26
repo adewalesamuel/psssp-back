@@ -156,10 +156,7 @@ class ApiUserAuthController extends Controller
             }
         } else {
             $sponsor = Psssp::getSolidariteUser();
-        }
-
-        throw new \Exception($sponsor, 1);
-        
+        }        
 
         $account_sponsor = new AccountSponsor;
 

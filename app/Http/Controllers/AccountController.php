@@ -15,6 +15,7 @@ use App\Models\Ebook;
 use App\Models\Category;
 use App\Models\User;
 use App\Models\AccountSponsor;
+use App\Models\Country;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
 use App\Psssp;
@@ -47,11 +48,18 @@ class AccountController extends Controller
 
     public function notification_index(Request $request) {
         $account = Auth::getUser($request, Auth::ACCOUNT);
+        $notifications = $account->notifications->jsonserialize();
 
+        for ($i=0; $i < count($notifications); $i++) {
+            $account = $notifications[$i]['data']['account'];
+            $country = Country::find($account['country_id']);
+
+            $notifications[$i]['data']['account']['country'] = $country;
+        }
 
         $data = [
             'success' => true,
-            'notifications' => $account->notifications
+            'notifications' => $notifications
 
         ];
 
@@ -139,15 +147,19 @@ class AccountController extends Controller
 
         $clients = Account::whereIn('id', $distinct_order_account_id_list)->get();
 
+        $num_account = $account->user->subscription_plan->num_account;
+        $accounts_count = $account->user->accounts()->count();
+
         $data = [
             'success' => true,
             'analytics' => [
+                'account_number' => $accounts_count - ($num_account -1),
                 'accounts_count' => $account->user->accounts()->count(),
                 'products_count' => $account_product_id_list->count(),
                 'clients_count' => $clients->count(),
                 'revenu' => $account_product_order_list->sum('amount'),
                 'orders_count' => $account_product_order_list->count(),
-                'initial_stock' => intval($account_product_list->sum('initial_stock')),
+                'initial_stock' => intval($account_product_id_list_with_trashed->sum('initial_stock')),
                 'current_stock' => intval($account_product_list->sum('current_stock')),
                 'notifications_count' => count($account->notifications)
             ]
@@ -281,14 +293,15 @@ class AccountController extends Controller
 
             if (isset($account->referer_sponsor_code) &&
                 User::where('sponsor_code', $account->referer_sponsor_code)->exists()) {
-                $account_sponsor = AccountSponsor::where('account_id',
-                $account->id)->firstOrFail();
+                $account_sponsor = AccountSponsor::where('account_id',$account->id)->firstOrFail();
 
-                $sponsor = Account::where('user_id',
-                    $account_sponsor->user->id)->oldest()->firstOrFail();
-            }
+                if ($account_sponsor->user->sponsor_code !== Psssp::SOLIDARITE_SPONSOR_CODE) {
+                    $sponsor = Account::where('user_id',$account_sponsor->user->id)
+                    ->oldest()->firstOrFail();
+                }
+            }            
 
-            $product_list = $this->_get_unique_ebook_product_list($account, $sponsor);
+            $product_list = $this->_get_unique_ebook_product_list($sponsor);
 
             $order_list = [];
 
@@ -347,18 +360,17 @@ class AccountController extends Controller
         return response()->json($data);
     }
 
-    private function _get_unique_ebook_product_list(Account $account, $sponsor) {
+    private function _get_unique_ebook_product_list($sponsor) {
         $ebook_category = Category::where('slug', 'like', '%ebook%')
         ->orWhere('slug', 'like', '%e-book%')->firstOrFail();
 
-        $product_list = collect(Category::where('category_id', 
+        $product_list = collect(Category::where('category_id',
             $ebook_category->id)->get())->map(
-            function($sub_category, $index) use ($account, $sponsor) {
+            function($sub_category, $index) use ($sponsor) {
                 if ($index == 0 && $sponsor != null)
                     return $this->_get_sponsor_product($sponsor);
 
-                return $this->_get_random_product_by_category_id(
-                    $sub_category->id, $sponsor);
+                return $this->_get_random_product_by_category_id($sub_category->id, $sponsor);
             }
         );
 
@@ -411,7 +423,7 @@ class AccountController extends Controller
         return $product;
     }
 
-    private function _get_sponsor_product(Account $sponsor) {
+    private function _get_sponsor_product(Account $sponsor) {   
         return $sponsor->products()->first();
     }
 }
