@@ -305,8 +305,8 @@ class AccountController extends Controller
 
             Order::insert($order_list);
 
-            //TODO: loop through suscription plan; check if plan[num_account] <= sponsor_account_num < plan+1[num_account]
-            $this->_assign_product_list_to_account($account, 7);
+            $this->_assign_product_list_to_account($account, 
+                $account->user->subscription_plan->num_product);
 
             if ($sponsor != null && !Str::contains(
                 Str::lower($sponsor->email), Psssp::SOLIDARITE_LOGIN)) {
@@ -392,12 +392,9 @@ class AccountController extends Controller
                 $product->is_public = $ebook->is_public ?? false;
 
                 $product->save();
-
-                array_splice($ebook_id_list, $random_index, 1);
             }
     }
 
-    // TODO: first book must be sponsors if not solidarite then other books must not be sponsors
     private function _get_random_product_by_category_id(int $category_id, $sponsor): Product {
         $product_id_list = Product::where(function($query) use ($sponsor) {
             $sponsor_id = '-1';
@@ -415,8 +412,6 @@ class AccountController extends Controller
     }
 
     private function _get_sponsor_product(Account $sponsor) {
-        // $product = Product::where('account_id', $sponsor->id)->withTrashed()->get();
-        // throw new \Exception($sponsor,1);
         return $sponsor->products()->first();
     }
 }

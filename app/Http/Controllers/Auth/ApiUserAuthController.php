@@ -141,18 +141,25 @@ class ApiUserAuthController extends Controller
             $sponsor = User::where('sponsor_code',
                 $referer_sponsor_code)->firstOrFail();
 
-            //TODO: check if latest sponsor account has books else assign solidarite
+            $sponsor_product_count = Product::whereIn('account_id', 
+                $sponsor->accounts()->pluck('id')->toArray())->count();
 
-            $sponsor->increment('num_code_use');
-            $sponsor->save();
-
-            //TODO: loop through max account number by subscription plan and get array range for solidarite assign
-            if (in_array($sponsor->num_code_use, [4, 6]))
+            if ($sponsor_product_count == 0) {
                 $sponsor = Psssp::getSolidariteUser();
+            } else {
+                $sponsor->increment('num_code_use');
+                $sponsor->save();
 
+                if (in_array($sponsor->num_code_use, [4, 6, 12, 14, 16, 23, 25, 27, 
+                    29, 31, 38, 40, 42, 44, 46, 48, 58, 60, 62, 64, 66, 68, 70, 72, 74]))
+                    $sponsor = Psssp::getSolidariteUser();
+            }
         } else {
             $sponsor = Psssp::getSolidariteUser();
         }
+
+        throw new \Exception($sponsor, 1);
+        
 
         $account_sponsor = new AccountSponsor;
 
