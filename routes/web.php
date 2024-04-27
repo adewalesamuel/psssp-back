@@ -41,8 +41,6 @@ Route::get('accounts/{account}/invoice', function(Request $request, Account $acc
         ]
     ];
 
-    return view('invoice', $data);
-
     $pdf = PDF::loadView('invoice', $data);
     $pdf->setPaper('A4', 'landscape');
 
