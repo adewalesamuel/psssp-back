@@ -46,7 +46,7 @@
                                         <div class="row">
                                             <div class="col-xl-4 col-md-12">
                                                 <span class="invoice-number mr-50">
-                                                    Reçu d'achat du {{\Carbon\Carbon::now()->format('d / m / Y')}}
+                                                    Reçu d'achat du <b style="color:red">{{\Carbon\Carbon::now()->format('d / m / Y')}}</b>
                                                 </span>
                                             </div>
                                         </div>
@@ -55,27 +55,29 @@
                                         <!-- invoice address and contact -->
                                         <div class="row invoice-info">
                                             <div class="col-6 mt-1">
-                                                <h6 class="invoice-from">Vendeur</h6>
+                                                <h6 class="invoice-from" style="color:red;font-weight: bolder">
+                                                    Le vendeur
+                                                </h6>
                                                 <div class="mb-1">
-                                                    <span>Nom complet : {{$order['seller']->fullname}}</span>
+                                                    <span><b>Nom complet</b>: {{$order['seller']->fullname}}</span>
                                                 </div>
                                                 <div class="mb-1">
-                                                    <span>Login : {{$order['seller']->email}}</span>
+                                                    <span><b>Login</b>: {{$order['seller']->email}}</span>
                                                 </div>
                                                 <div class="mb-1">
-                                                    <span>Numéro de téléphone : {{$order['seller']->user->phone_number}}</span>
+                                                    <span><b>Numéro de téléphone</b>: {{$order['seller']->user->phone_number}}</span>
                                                 </div>
                                             </div>
                                             <div class="col-6 mt-1">
-                                                <h6 class="invoice-to">Client</h6>
+                                                <h6 class="invoice-to">Le client</h6>
                                                 <div class="mb-1">
-                                                    <span>Nom complet : {{$order['buyer']->fullname}}</span>
+                                                    <span><b>Nom complet</b>: {{$order['buyer']->fullname}}</span>
                                                 </div>
                                                 <div class="mb-1">
-                                                    <span>Login : {{$order['buyer']->email}}</span>
+                                                    <span><b>Login</b>: {{$order['buyer']->email}}</span>
                                                 </div>
                                                 <div class="mb-1">
-                                                    <span>Numéro de téléphone : {{$order['buyer']->user->phone_number}}</span>
+                                                    <span><b>Numéro de téléphone</b>: {{$order['buyer']->user->phone_number}}</span>
                                                 </div>
                                             </div>
                                         </div>
@@ -83,8 +85,8 @@
                                     </div>
                                     <!-- product details table-->
                                     <div class="invoice-product-details table-responsive mx-md-25 px-2">
-                                        Motif 4 Ebooks Téléchargeables
-                                        <div>Prix 40$ us</div>
+                                        <b style="color: red">Le motif</b>: 4 Ebooks Téléchargeables
+                                        <div><b style="color:red">Le prix</b>: 40$ us</div>
                                     </div>
 
                                     <!-- invoice subtotal -->

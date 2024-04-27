@@ -33,7 +33,8 @@ class ApiUserAuthController extends Controller
         }
 
         $account = Account::where('email', $credentials['email'])
-        ->with(['user', 'user.subscription_plan'])->first();
+                ->with(['user', 'user.subscription_plan'])->first();
+        $account['num_account'] = $account->user->accounts()->count();
 
         $data = [
             'success' => true,
@@ -107,6 +108,7 @@ class ApiUserAuthController extends Controller
         $user->subscription_plan;
 
         $account['user'] = $user;
+        $account['num_account'] = $account->user->accounts()->count();
 
         $data = [
             'success'  => true,

@@ -147,7 +147,7 @@ class AccountController extends Controller
 
         $clients = Account::whereIn('id', $distinct_order_account_id_list)->get();
 
-        $num_account = $account->user->subscription_plan->num_account;
+        $num_account = $account->user?->subscription_plan?->num_account;
         $accounts_count = $account->user->accounts()->count();
 
         $data = [
