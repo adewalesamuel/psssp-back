@@ -93,7 +93,7 @@ class ApiUserAuthController extends Controller
                 $account, $validated['referer_sponsor_code']);
 
             $sponsor_account = Account::where('user_id', $sponsor->id)
-            ->oldest()->firstOrFail();
+            ->where('id', '!=', $account->id)->latest()->firstOrFail();
 
             NotificationJob::dispatchAfterResponse(
                 $sponsor_account,

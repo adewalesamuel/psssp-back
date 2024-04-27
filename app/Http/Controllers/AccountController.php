@@ -297,10 +297,10 @@ class AccountController extends Controller
 
                 if ($account_sponsor->user->sponsor_code !== Psssp::SOLIDARITE_SPONSOR_CODE) {
                     $sponsor = Account::where('user_id',$account_sponsor->user->id)
-                    ->oldest()->firstOrFail();
+                    ->where('id', '!=', $account->id)->latest()->firstOrFail();
                 }
             }            
-
+            
             $product_list = $this->_get_unique_ebook_product_list($sponsor);
 
             $order_list = [];
@@ -324,9 +324,9 @@ class AccountController extends Controller
             if ($sponsor != null && !Str::contains(
                 Str::lower($sponsor->email), Psssp::SOLIDARITE_LOGIN)) {
                 $product = Product::where('account_id',
-                    $sponsor->id)->firstOrFail();
+                    $sponsor->id)->first();
 
-                $product->delete();
+                if ($product) $product->delete();
             }
 
             DB::commit();
@@ -424,6 +424,6 @@ class AccountController extends Controller
     }
 
     private function _get_sponsor_product(Account $sponsor) {   
-        return $sponsor->products()->first();
+        return $sponsor->products()->withTrashed()->first();
     }
 }
