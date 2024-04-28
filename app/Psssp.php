@@ -3,6 +3,7 @@
 namespace App;
 
 use App\Models\User;
+use App\Models\Account;
 
 class Psssp {
 	public const SOLIDARITE_LOGIN = 'solidarite';
@@ -11,5 +12,9 @@ class Psssp {
 
 	public static function getSolidariteUser(): User {
 		return User::where('sponsor_code', self::SOLIDARITE_SPONSOR_CODE)->firstOrFail();
+	}
+
+	public static function getSolidariteAccount(): Account {
+		return Account::where('email', self::SOLIDARITE_LOGIN)->firstOrFail();
 	}
 }

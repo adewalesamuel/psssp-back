@@ -9,6 +9,7 @@ use Illuminate\Support\Str;
 use App\Http\Auth;
 use App\Models\Account;
 use App\Models\Product;
+use App\Psssp;
 use \PDF;
 
 
@@ -57,6 +58,7 @@ class OrderController extends Controller
         ->distinct()->pluck('account_id')->toArray();
 
         $clients = Account::whereIn('id', $distinct_order_account_id_list)
+        ->where('id', '!=', Psssp::getSolidariteAccount()->id)
         ->with(['user'])->get();
 
         $data = [

@@ -129,6 +129,7 @@ class AccountController extends Controller
 
     public function account_analytics(Request $request) {
         $account = Auth::getUser($request, Auth::ACCOUNT);
+        $solidarite_account_id = Psssp::getSolidariteAccount()->id;
 
         $account_product_id_list = Product::where('account_id', $account->id);
 
@@ -145,20 +146,22 @@ class AccountController extends Controller
         $account_product_id_list_with_trashed->pluck('id')->toArray())
         ->distinct()->pluck('account_id')->toArray();
 
-        $clients = Account::whereIn('id', $distinct_order_account_id_list)->get();
+        $clients = Account::whereIn('id', $distinct_order_account_id_list)
+        ->where('id', '!=', $solidarite_account_id)->get();
 
-        $num_account = $account->user?->subscription_plan?->num_account;
-        $accounts_count = $account->user->accounts()->count();
-
+        $account_id_list = $account->user->accounts()->orderBy('id', 'asc')->pluck('id')->toArray();
+        $account_number = array_search($account->id, $account_id_list) + 1;
+ 
         $data = [
             'success' => true,
             'analytics' => [
-                'account_number' => $accounts_count - ($num_account -1),
-                'accounts_count' => $account->user->accounts()->count(),
+                'account_number' => $account_number,
+                'accounts_count' => count($account_id_list),
                 'products_count' => $account_product_id_list->count(),
                 'clients_count' => $clients->count(),
-                'revenu' => $account_product_order_list->sum('amount'),
                 'orders_count' => $account_product_order_list->count(),
+                'revenu' => $account_product_order_list->where(
+                    'account_id', '!=', $solidarite_account_id)->sum('amount'),
                 'initial_stock' => intval($account_product_id_list_with_trashed->sum('initial_stock')),
                 'current_stock' => intval($account_product_list->sum('current_stock')),
                 'notifications_count' => count($account->notifications)
@@ -290,9 +293,11 @@ class AccountController extends Controller
             $account->save();
 
             $sponsor = null;
+            $referer_sponsor = User::where('sponsor_code', 
+                $account->referer_sponsor_code ?? null)->first();
+            $account_sponsor = null;
 
-            if (isset($account->referer_sponsor_code) &&
-                User::where('sponsor_code', $account->referer_sponsor_code)->exists()) {
+            if (isset($account->referer_sponsor_code) && $referer_sponsor) {
                 $account_sponsor = AccountSponsor::where('account_id',$account->id)->firstOrFail();
 
                 if ($account_sponsor->user->sponsor_code !== Psssp::SOLIDARITE_SPONSOR_CODE) {
@@ -321,12 +326,33 @@ class AccountController extends Controller
             $this->_assign_product_list_to_account($account, 
                 $account->user->subscription_plan->num_product);
 
-            if ($sponsor != null && !Str::contains(
-                Str::lower($sponsor->email), Psssp::SOLIDARITE_LOGIN)) {
+
+            if ($sponsor != null) {
                 $product = Product::where('account_id',
                     $sponsor->id)->first();
 
                 if ($product) $product->delete();
+            } else {
+                if ($referer_sponsor) {
+                    $sponsor_account = $referer_sponsor->accounts()->latest()
+                        ->where('id', '!=', $account->id)->first();
+                    $sponsor_product = $sponsor_account->products()->first();
+
+                    if ($sponsor_product && $sponsor_account) {
+                        $order = new Order;
+
+                        $order->code = strtoupper(Str::random(10));
+                        $order->quantity = 1;
+                        $order->amount = $sponsor_product->price ?? 0;
+                        $order->status = 'validated';
+                        $order->product_id = $sponsor_product->id;
+                        $order->account_id = Psssp::getSolidariteAccount()->id;
+
+                        $order->save();                        
+
+                        $sponsor_product->delete();
+                    }
+                }
             }
 
             DB::commit();
@@ -409,13 +435,8 @@ class AccountController extends Controller
 
     private function _get_random_product_by_category_id(int $category_id, $sponsor): Product {
         $product_id_list = Product::where(function($query) use ($sponsor) {
-            $sponsor_id = '-1';
-
-            if ($sponsor != null) $sponsor_id = $sponsor->id;
-
-            return $query->orWhere('account_id', '!=', $sponsor_id)
-            ->orWhereNull('account_id');
-        })->withTrashed()->pluck('id')->toArray();
+            return $query->whereNull('account_id')->orWhereNull('account_id');
+        })->where('category_id', $category_id)->withTrashed()->pluck('id')->toArray();
 
         $random_product_id = $product_id_list[rand(0, count($product_id_list) -1 )];
         $product = Product::withTrashed()->findOrFail($random_product_id);
