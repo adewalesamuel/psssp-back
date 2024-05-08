@@ -47,6 +47,10 @@ Route::get('accounts/{account}/invoice', function(Request $request, Account $acc
     return $pdf->stream('facture.pdf');
 });
 
+Route::get('/supprimer', function(){
+    return view('supprimer');
+});
+
 Route::get('/admin/{any}', function () {
     return view('admin');
 })->where('any', '(.*)?');
