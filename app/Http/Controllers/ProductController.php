@@ -22,14 +22,14 @@ class ProductController extends Controller
     public function index(Request $request)
     {
         $products = Product::where('id', '>', -1)
-        ->orderBy('created_at', 'desc');
+        ->orderBy('created_at', 'desc')->get();
 
-        if ($request->input('page') == null ||
-            $request->input('page') == '') {
-            $products = $products->get();
-        } else {
-            $products = $products->with(['category'])->paginate();
-        }
+        // if ($request->input('page') == null ||
+        //     $request->input('page') == '') {
+        //     $products = $products->get();
+        // } else {
+        //     $products = $products->with(['category'])->paginate();
+        // }
 
         $data = [
             'success' => true,
