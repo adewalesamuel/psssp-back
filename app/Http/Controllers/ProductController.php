@@ -21,7 +21,7 @@ class ProductController extends Controller
      */
     public function index(Request $request)
     {
-        $products = Product::where('id', '>', -1)
+        $products = Product::whereNull('account_id')
         ->orderBy('created_at', 'desc');
 
         if ($request->input('page') == null ||
