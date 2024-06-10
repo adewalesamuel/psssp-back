@@ -117,7 +117,6 @@ class UserController extends Controller
         $validated = $request->validated();
 
         $user->phone_number = $validated['phone_number'] ?? null;
-        $user->sponsor_code = "CP" . Utils::generateRandAlnum();
 
         $user->save();
 
@@ -135,7 +134,6 @@ class UserController extends Controller
         $validated = $request->validated();
 
         $user->phone_number = $validated['phone_number'] ?? null;
-        $user->sponsor_code = "CP" . Utils::generateRandAlnum();
 
         $user->save();
 

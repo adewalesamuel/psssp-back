@@ -21,15 +21,15 @@ class ProductController extends Controller
      */
     public function index(Request $request)
     {
-        $products = Product::where('id', '>', -1)
-        ->orderBy('created_at', 'desc')->get();
+        $products = Product::whereNull('account_id')
+        ->orderBy('created_at', 'desc');
 
-        // if ($request->input('page') == null ||
-        //     $request->input('page') == '') {
-        //     $products = $products->get();
-        // } else {
-        //     $products = $products->with(['category'])->paginate();
-        // }
+        if ($request->input('page') == null ||
+            $request->input('page') == '') {
+            $products = $products->get();
+        } else {
+            $products = $products->with(['category'])->paginate();
+        }
 
         $data = [
             'success' => true,

@@ -209,7 +209,6 @@ class AccountController extends Controller
 
         $account->fullname = $validated['fullname'] ?? null;
         $account->email = $validated['email'] ?? null;
-        $account->password = $validated['password'] ?? null;
         $account->backup_number = $validated['backup_number'] ?? null;
         $account->whatsapp_number = $validated['whatsapp_number'] ?? null;
         $account->telegram_number = $validated['telegram_number'] ?? null;
@@ -218,6 +217,9 @@ class AccountController extends Controller
         $account->referer_sponsor_code = $validated['referer_sponsor_code'] ?? null;
         $account->country_id = $validated['country_id'] ?? null;
         $account->user_id = $validated['user_id'] ?? null;
+
+        if (isset($validated['password']))
+            $account->password = $validated['password'] ?? null;
 
         $account->save();
 
@@ -244,6 +246,9 @@ class AccountController extends Controller
         $account->referer_sponsor_code = $validated['referer_sponsor_code'] ??
         $account->referer_sponsor_code;
         $account->country_id = $validated['country_id'] ?? null;
+
+        if (isset($validated['password']))
+            $account->password = $validated['password'] ?? null;
 
         $account->save();
 

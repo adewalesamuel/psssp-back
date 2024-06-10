@@ -34,7 +34,7 @@ class UpdateAccountRequest extends FormRequest
             'profile_img_url' => 'nullable|string',
             'referer_sponsor_code' => 'nullable|string',
             'country_id' => 'nullable|integer|exists:countries,id',
-            'user_id' => 'nullable|string|exists:users,id'
+            'user_id' => 'nullable|integer|exists:users,id'
         ];
     }
 }
