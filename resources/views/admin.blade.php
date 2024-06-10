@@ -4,8 +4,8 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/admin/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>PSSSP</title>
-    <script type="module" crossorigin src="/admin/assets/index-DbFXS5fN.js"></script>
+    <title>PSSSP Admin</title>
+    <script type="module" crossorigin src="/admin/assets/index-BIF1DFfh.js"></script>
     <link rel="stylesheet" crossorigin href="/admin/assets/index-CTf7qMBi.css">
   </head>
   <body>
