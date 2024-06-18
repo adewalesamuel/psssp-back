@@ -8,11 +8,10 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
-    <script type="module" crossorigin src="/user/assets/index-fbeef3b2.js"></script>
-    <link rel="stylesheet" href="/user/assets/index-c499184b.css">
+    <script type="module" crossorigin src="/user/assets/index-CeVtYssH.js"></script>
+    <link rel="stylesheet" crossorigin href="/user/assets/index-CHiiBCiu.css">
   </head>
   <body>
     <div id="root"></div>
-    
   </body>
 </html>
