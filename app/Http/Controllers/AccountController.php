@@ -151,7 +151,7 @@ class AccountController extends Controller
 
         $account_id_list = $account->user->accounts()->orderBy('id', 'asc')->pluck('id')->toArray();
         $account_number = array_search($account->id, $account_id_list) + 1;
- 
+
         $data = [
             'success' => true,
             'analytics' => [
@@ -160,8 +160,7 @@ class AccountController extends Controller
                 'products_count' => $account_product_id_list->count(),
                 'clients_count' => $clients->count(),
                 'orders_count' => $account_product_order_list->count(),
-                'revenu' => $account_product_order_list->where(
-                    'account_id', '!=', $solidarite_account_id)->sum('amount'),
+                'revenu' => intval($account_product_list->sum('price')),
                 'initial_stock' => intval($account_product_id_list_with_trashed->sum('initial_stock')),
                 'current_stock' => intval($account_product_list->sum('current_stock')),
                 'notifications_count' => count($account->notifications)
@@ -298,7 +297,7 @@ class AccountController extends Controller
             $account->save();
 
             $sponsor = null;
-            $referer_sponsor = User::where('sponsor_code', 
+            $referer_sponsor = User::where('sponsor_code',
                 $account->referer_sponsor_code ?? null)->first();
             $account_sponsor = null;
 
@@ -309,8 +308,8 @@ class AccountController extends Controller
                     $sponsor = Account::where('user_id',$account_sponsor->user->id)
                     ->where('id', '!=', $account->id)->latest()->firstOrFail();
                 }
-            }            
-            
+            }
+
             $product_list = $this->_get_unique_ebook_product_list($sponsor);
 
             $order_list = [];
@@ -328,7 +327,7 @@ class AccountController extends Controller
 
             Order::insert($order_list);
 
-            $this->_assign_product_list_to_account($account, 
+            $this->_assign_product_list_to_account($account,
                 $account->user->subscription_plan->num_product);
 
 
@@ -353,7 +352,7 @@ class AccountController extends Controller
                         $order->product_id = $sponsor_product->id;
                         $order->account_id = Psssp::getSolidariteAccount()->id;
 
-                        $order->save();                        
+                        $order->save();
 
                         $sponsor_product->delete();
                     }
@@ -449,7 +448,7 @@ class AccountController extends Controller
         return $product;
     }
 
-    private function _get_sponsor_product(Account $sponsor) {   
+    private function _get_sponsor_product(Account $sponsor) {
         return $sponsor->products()->withTrashed()->first();
     }
 }

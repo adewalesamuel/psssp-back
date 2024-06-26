@@ -69,7 +69,9 @@
                                                 </div>
                                             </div>
                                             <div class="col-6 mt-1">
-                                                <h6 class="invoice-to">Le client</h6>
+                                                <h6 class="invoice-from" style="color:red;font-weight: bolder">
+                                                    Le client
+                                                </h6>
                                                 <div class="mb-1">
                                                     <span><b>Nom complet</b>: {{$order['buyer']->fullname}}</span>
                                                 </div>
@@ -86,7 +88,7 @@
                                     <!-- product details table-->
                                     <div class="invoice-product-details table-responsive mx-md-25 px-2">
                                         <b style="color: red">Le motif</b>: 4 Ebooks Téléchargeables
-                                        <div><b style="color:red">Le prix</b>: 40$ us</div>
+                                        <div><b style="color:red">Le prix</b>: 10$ us</div>
                                     </div>
 
                                     <!-- invoice subtotal -->

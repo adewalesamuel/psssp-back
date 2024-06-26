@@ -32,6 +32,7 @@ Route::get('accounts/{account}/invoice', function(Request $request, Account $acc
     }
 
     $seller = $sponsor->accounts()
+    ->where('id', '!=', $account->id)
     ->orderBy('created_at', 'desc')->first();
     $seller['user'] = $sponsor;
     $data = [
