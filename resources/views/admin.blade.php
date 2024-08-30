@@ -5,7 +5,7 @@
     <link rel="icon" type="image/svg+xml" href="/admin/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>PSSSP Admin</title>
-    <script type="module" crossorigin src="/admin/assets/index-BIF1DFfh.js"></script>
+    <script type="module" crossorigin src="/admin/assets/index-DIzYu_1f.js"></script>
     <link rel="stylesheet" crossorigin href="/admin/assets/index-CTf7qMBi.css">
   </head>
   <body>
